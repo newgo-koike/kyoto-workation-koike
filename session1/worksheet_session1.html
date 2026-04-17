@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Session 1 Worksheet — 真のセンターピンを射抜く</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Noto+Serif+JP:wght@700;900&family=Bebas+Neue&family=JetBrains+Mono:wght@400;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  html, body {
+    font-family: 'Noto Sans JP', sans-serif;
+    color: #1A1A1A;
+    background: #FFFFFF;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  :root {
+    --ink: #0F0F0F;
+    --paper: #FAF8F3;
+    --accent: #D93A26;
+    --accent-deep: #8C1F10;
+    --gold: #B8934A;
+    --mute: #7A7A7A;
+    --rule: #1A1A1A;
+    --soft: #EFEAE0;
+  }
+
+  .page {
+    width: 210mm;
+    height: 297mm;
+    padding: 14mm 15mm;
+    page-break-after: always;
+    background: var(--paper);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .page:last-child { page-break-after: auto; }
+
+  .page-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  /* Header band */
+  .band {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+    padding: 5px 0;
+    margin-bottom: 8mm;
+    font-family: 'Bebas Neue', 'Noto Sans JP', sans-serif;
+    letter-spacing: 0.15em;
+    font-size: 10pt;
+    color: var(--ink);
+    flex-shrink: 0;
+  }
+  .band .left { display: flex; gap: 14px; align-items: center; }
+  .band .tag {
+    background: var(--ink); color: var(--paper);
+    padding: 2px 10px; font-weight: 700;
+    font-size: 9pt; letter-spacing: 0.2em;
+  }
+  .band .accent-dot {
+    width: 8px; height: 8px; background: var(--accent);
+    display: inline-block; border-radius: 50%;
+  }
+
+  /* Footer */
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.2em;
+    font-size: 8pt;
+    color: var(--mute);
+    border-top: 1px solid var(--mute);
+    padding-top: 3mm;
+    margin-top: 6mm;
+    flex-shrink: 0;
+  }
+  .footer .mark { color: var(--accent); font-weight: 700; }
+
+  /* ============ COVER ============ */
+  .cover {
+    background:
+      radial-gradient(circle at 85% 15%, rgba(217,58,38,0.10) 0%, transparent 40%),
+      radial-gradient(circle at 10% 90%, rgba(184,147,74,0.12) 0%, transparent 45%),
+      var(--paper);
+    padding: 18mm 16mm;
+    justify-content: space-between;
+  }
+  .cover-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.15em;
+    color: var(--ink);
+    font-size: 10pt;
+  }
+  .cover-top .brand { display: flex; align-items: center; gap: 10px; }
+  .cover-top .brand::before {
+    content: ''; width: 22px; height: 22px;
+    background: var(--accent);
+    transform: rotate(45deg);
+    display: inline-block;
+  }
+  .cover-top .meta { text-align: right; line-height: 1.6; }
+
+  .cover-mid {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 6mm 0;
+  }
+  .kicker {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.35em;
+    font-size: 12pt;
+    color: var(--accent);
+    margin-bottom: 12mm;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .kicker::before {
+    content: ''; width: 54px; height: 2px; background: var(--accent);
+  }
+  .cover-title {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: 56pt;
+    line-height: 1.1;
+    color: var(--ink);
+    margin-bottom: 8mm;
+    letter-spacing: 0.02em;
+  }
+  .cover-title .em {
+    display: inline-block;
+    background: linear-gradient(180deg, transparent 62%, rgba(217,58,38,0.28) 62%, rgba(217,58,38,0.28) 88%, transparent 88%);
+    padding: 0 4px;
+  }
+  .cover-sub {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 300;
+    font-size: 13pt;
+    line-height: 1.9;
+    color: #2A2A2A;
+    max-width: 150mm;
+    margin-bottom: 18mm;
+  }
+  .cover-sub strong { font-weight: 700; color: var(--accent-deep); }
+  .quote-block {
+    border-left: 4px solid var(--accent);
+    padding: 6mm 8mm;
+    background: rgba(255,255,255,0.55);
+    max-width: 150mm;
+  }
+  .quote-label {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.25em;
+    font-size: 9pt;
+    color: var(--accent);
+    margin-bottom: 4mm;
+  }
+  .quote-text {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 700;
+    font-size: 17pt;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .cover-bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8mm;
+    border-top: 1px solid var(--ink);
+    padding-top: 6mm;
+  }
+  .field-group { display: flex; flex-direction: column; gap: 3mm; }
+  .field-label {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.2em;
+    font-size: 9pt;
+    color: var(--mute);
+  }
+  .field-line {
+    border-bottom: 1.5px solid var(--ink);
+    height: 9mm;
+  }
+
+  /* ============ STEP HEADER ============ */
+  .step-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12mm;
+    margin-bottom: 6mm;
+    flex-shrink: 0;
+  }
+  .step-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 58pt;
+    line-height: 0.8;
+    color: var(--ink);
+    position: relative;
+  }
+  .step-num::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: -4px;
+    width: 100%; height: 7px;
+    background: var(--accent);
+  }
+  .step-title-wrap { flex: 1; padding-top: 2mm; }
+  .step-phase {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.3em;
+    font-size: 10pt;
+    color: var(--accent);
+    margin-bottom: 2mm;
+  }
+  .step-title {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: 22pt;
+    line-height: 1.3;
+    color: var(--ink);
+    margin-bottom: 2mm;
+  }
+  .step-desc {
+    font-size: 10pt;
+    line-height: 1.75;
+    color: #333;
+  }
+  .step-desc strong { color: var(--accent-deep); font-weight: 700; }
+
+  .directive {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 4mm 6mm;
+    margin-bottom: 5mm;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10pt;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+  }
+  .directive .target {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13pt;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+  }
+  .timer {
+    display: inline-block;
+    background: var(--accent);
+    color: #FFF;
+    padding: 1.5mm 4mm;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.15em;
+    font-size: 10pt;
+    margin-left: 4mm;
+  }
+
+  /* Evaluation table */
+  .eval-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9pt;
+    flex: 1;
+  }
+  .eval-table th {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 3mm 2mm;
+    font-weight: 700;
+    font-size: 8.5pt;
+    text-align: center;
+    vertical-align: bottom;
+    line-height: 1.4;
+  }
+  .eval-table th .th-sub {
+    display: block;
+    font-weight: 300;
+    font-size: 7pt;
+    color: rgba(250,248,243,0.65);
+    margin-top: 1mm;
+  }
+  .eval-table th:first-child {
+    text-align: left;
+    padding-left: 4mm;
+    width: 10mm;
+  }
+  .eval-table td {
+    border-bottom: 1px solid #CCC;
+    padding: 2.5mm 2mm;
+    text-align: center;
+    height: 9mm;
+    vertical-align: middle;
+  }
+  .eval-table td:first-child {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13pt;
+    color: var(--accent);
+    font-weight: 700;
+    text-align: center;
+    width: 10mm;
+  }
+  .eval-table td:last-child {
+    font-weight: 700;
+    background: rgba(217,58,38,0.04);
+  }
+  .eval-table tbody tr:last-child td { border-bottom: 2px solid var(--ink); }
+
+  /* Bottleneck / THE ONE box */
+  .bottleneck-box {
+    border: 2px solid var(--ink);
+    padding: 8mm;
+    margin-top: 5mm;
+    position: relative;
+    background: #FFF;
+  }
+  .bottleneck-box::before {
+    content: 'THE ONE';
+    position: absolute;
+    top: -10px; left: 20px;
+    background: var(--accent);
+    color: #FFF;
+    padding: 2px 10px;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.2em;
+    font-size: 10pt;
+  }
+  .bottleneck-hint {
+    font-size: 9pt;
+    color: var(--mute);
+    margin-bottom: 4mm;
+    line-height: 1.6;
+  }
+  .writing-area {
+    border-bottom: 1.5px solid var(--ink);
+    height: 10mm;
+    margin-bottom: 3mm;
+  }
+  .writing-area.short { height: 9mm; }
+
+  .reason-area { margin-top: 6mm; display: flex; flex-direction: column; gap: 5mm; }
+  .reason-block .label {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.2em;
+    font-size: 10pt;
+    color: var(--accent);
+    margin-bottom: 2mm;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .reason-block .label::before {
+    content: ''; width: 14px; height: 2px; background: var(--accent);
+  }
+  .reason-block .ja {
+    font-size: 9.5pt; color: #444; margin-bottom: 3mm; line-height: 1.55;
+  }
+
+  /* Questions */
+  .q-item {
+    display: grid;
+    grid-template-columns: 14mm 1fr;
+    gap: 4mm;
+    margin-bottom: 3mm;
+    padding: 3mm 0;
+    border-bottom: 1px dashed #CCC;
+  }
+  .q-item:last-child { border-bottom: none; }
+  .q-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 17pt;
+    color: var(--ink);
+    background: var(--soft);
+    text-align: center;
+    padding: 2mm 0;
+    border-left: 3px solid var(--accent);
+    line-height: 1.1;
+    font-weight: 700;
+    align-self: start;
+  }
+  .q-body .q-text {
+    font-size: 10pt;
+    font-weight: 500;
+    line-height: 1.55;
+    color: var(--ink);
+    margin-bottom: 2.5mm;
+  }
+  .q-body .q-text strong { color: var(--accent-deep); }
+  .q-body .q-line {
+    border-bottom: 1px solid #AAA;
+    height: 7mm;
+    margin-bottom: 1.5mm;
+  }
+
+  /* STEP 4 */
+  .redef-wrap {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 8mm;
+    margin-top: 2mm;
+    position: relative;
+  }
+  .redef-wrap::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 28mm; height: 28mm;
+    background: var(--accent);
+    clip-path: polygon(100% 0, 0 0, 100% 100%);
+  }
+  .redef-label {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.3em;
+    font-size: 11pt;
+    color: var(--accent);
+    margin-bottom: 4mm;
+    position: relative; z-index: 2;
+  }
+  .redef-syntax {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 12pt;
+    line-height: 2;
+    color: var(--paper);
+    margin-bottom: 5mm;
+    position: relative; z-index: 2;
+  }
+  .redef-syntax .slot {
+    display: inline-block;
+    background: rgba(217,58,38,0.3);
+    padding: 0 6px;
+    border-bottom: 1.5px solid var(--accent);
+    color: #FFE;
+    font-weight: 700;
+  }
+  .redef-write {
+    background: rgba(255,255,255,0.95);
+    padding: 5mm;
+    color: var(--ink);
+  }
+  .redef-write-line {
+    border-bottom: 1.5px solid var(--ink);
+    height: 10mm;
+    margin-bottom: 2mm;
+  }
+  .redef-write-intro {
+    font-size: 10pt;
+    margin-bottom: 4mm;
+    font-weight: 700;
+    color: var(--accent-deep);
+  }
+
+  .share-panel {
+    border: 1.5px solid var(--ink);
+    padding: 6mm;
+    margin-top: 2mm;
+  }
+  .share-title {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: 13pt;
+    color: var(--ink);
+    margin-bottom: 3mm;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .share-title::before {
+    content: ''; width: 18px; height: 18px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+  .share-desc {
+    font-size: 9pt;
+    color: var(--mute);
+    margin-bottom: 5mm;
+    line-height: 1.7;
+  }
+  .share-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5mm;
+  }
+  .share-box .sb-label {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.15em;
+    font-size: 9pt;
+    color: var(--accent);
+    margin-bottom: 2mm;
+  }
+  .share-box .sb-line {
+    border-bottom: 1px solid var(--ink);
+    height: 8mm;
+    margin-bottom: 2mm;
+  }
+
+  .goal-strip {
+    margin-top: 6mm;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 6mm 7mm;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .goal-strip .gl {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.25em;
+    font-size: 9pt;
+    color: var(--accent);
+    margin-bottom: 2mm;
+  }
+  .goal-strip .gt {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 700;
+    font-size: 12pt;
+    line-height: 1.6;
+  }
+  .goal-strip .arrow {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32pt;
+    color: var(--accent);
+    line-height: 1;
+    padding-left: 8mm;
+  }
+
+  /* Callout */
+  .callout {
+    background: linear-gradient(135deg, rgba(217,58,38,0.08) 0%, rgba(184,147,74,0.08) 100%);
+    border-left: 3px solid var(--accent);
+    padding: 3mm 5mm;
+    margin: 3mm 0;
+    font-size: 9pt;
+    line-height: 1.7;
+    color: #333;
+  }
+  .callout strong { color: var(--accent-deep); }
+
+  /* Issue table for STEP 01 */
+  .issue-table {
+    width: 100%;
+    border-collapse: collapse;
+    flex: 1;
+  }
+  .issue-table th {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 3mm 4mm;
+    font-weight: 700;
+    font-size: 9pt;
+    text-align: left;
+    line-height: 1.4;
+  }
+  .issue-table th:first-child { width: 10mm; text-align: center; }
+  .issue-table th:nth-child(2) { width: 48%; }
+  .issue-table th:nth-child(3) { width: auto; }
+  .issue-table td {
+    border-bottom: 1px solid #CCC;
+    padding: 2mm 4mm;
+    vertical-align: middle;
+    height: 11mm;
+  }
+  .issue-table td:first-child {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14pt;
+    color: var(--accent);
+    font-weight: 700;
+    text-align: center;
+    width: 10mm;
+    border-right: 1px solid #CCC;
+  }
+  .issue-table td:nth-child(2) {
+    border-right: 2px solid var(--accent);
+  }
+  .issue-table tbody tr:last-child td { border-bottom: 2px solid var(--ink); }
+
+  /* Utility */
+  .spacer { flex: 1; }
+  .no-break { page-break-inside: avoid; }
+</style>
+</head>
+<body>
+
+<!-- ======================== COVER ======================== -->
+<section class="page cover">
+  <div class="cover-top">
+    <div class="brand">KYOTO WORKATION 2026</div>
+    <div class="meta">
+      SESSION 1 / 60 MIN<br>
+      15:00 – 16:00
+    </div>
+  </div>
+
+  <div class="cover-mid">
+    <div class="kicker">WORKSHEET — SESSION 01</div>
+    <h1 class="cover-title">
+      真の<span class="em">センターピン</span>を<br>射抜く。
+    </h1>
+    <p class="cover-sub">
+      「必要要素」から「最優先課題」を特定し、<br>
+      検証を経て<strong>「真の課題」</strong>を一行で定義する60分。
+    </p>
+
+    <div class="quote-block">
+      <div class="quote-label">KILLER PHRASE</div>
+      <div class="quote-text">解けない問いに、<br>時間を溶かさない。</div>
+    </div>
+  </div>
+
+  <div class="cover-bottom">
+    <div class="field-group">
+      <div class="field-label">NAME ／ 氏名</div>
+      <div class="field-line"></div>
+    </div>
+    <div class="field-group">
+      <div class="field-label">DATE ／ 日付</div>
+      <div class="field-line"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== STEP 01 ======================== -->
+<section class="page">
+  <div class="band">
+    <div class="left">
+      <span class="tag">SESSION 01</span>
+      <span class="accent-dot"></span>
+      <span>課題洗い出し / IDENTIFY CHALLENGES</span>
+    </div>
+    <div>STEP 01 / 04</div>
+  </div>
+
+  <div class="page-body">
+    <div class="step-header">
+      <div class="step-num">01</div>
+      <div class="step-title-wrap">
+        <div class="step-phase">DIVERGE ／ 発散</div>
+        <h2 class="step-title">必要要素ごとに、現在の課題を洗い出す</h2>
+        <p class="step-desc">
+          前セッションで抽出した<strong>「目標達成に必要な要素」</strong>を左に書き写し、それぞれに対する「今の課題・障壁」を右に書き出す。
+        </p>
+      </div>
+    </div>
+
+    <div class="directive">
+      <div>前セッションのワークシートを見ながら書く</div>
+      <div class="target"><span class="timer">8 MIN</span></div>
+    </div>
+
+    <table class="issue-table">
+      <thead>
+        <tr>
+          <th>№</th>
+          <th>必要要素（前セッションから転記）</th>
+          <th>その要素に対する現在の課題</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>01</td><td></td><td></td></tr>
+        <tr><td>02</td><td></td><td></td></tr>
+        <tr><td>03</td><td></td><td></td></tr>
+        <tr><td>04</td><td></td><td></td></tr>
+        <tr><td>05</td><td></td><td></td></tr>
+        <tr><td>06</td><td></td><td></td></tr>
+        <tr><td>07</td><td></td><td></td></tr>
+        <tr><td>08</td><td></td><td></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout" style="margin-top: 4mm;">
+      <strong>書き方のルール —</strong> 課題は具体的に。「頑張りが足りない」ではなく<strong>「週3回の営業訪問が月1回になっている」</strong>のように、事実ベースで書く。
+    </div>
+  </div>
+
+  <div class="footer">
+    <div>KYOTO WORKATION / KOIKE SESSION</div>
+    <div class="mark">— 01 —</div>
+  </div>
+</section>
+
+<!-- ======================== STEP 02 ======================== -->
+<section class="page">
+  <div class="band">
+    <div class="left">
+      <span class="tag">SESSION 01</span>
+      <span class="accent-dot"></span>
+      <span>最優先課題の特定 / SELECT THE ONE</span>
+    </div>
+    <div>STEP 02 / 04</div>
+  </div>
+
+  <div class="page-body">
+    <div class="step-header">
+      <div class="step-num">02</div>
+      <div class="step-title-wrap">
+        <div class="step-phase">EVALUATE ／ 評価・選択</div>
+        <h2 class="step-title">4つの軸で評価し、最優先課題を1つ選ぶ</h2>
+        <p class="step-desc">
+          STEP 01で出した課題を評価マトリクスで採点する。<strong>感覚ではなく、構造的に選ぶ。</strong>
+        </p>
+      </div>
+    </div>
+
+    <div class="directive">
+      <div>全ての課題を評価してから選ぶ</div>
+      <div class="target"><span class="timer">7 MIN</span></div>
+    </div>
+
+    <table class="eval-table">
+      <thead>
+        <tr>
+          <th>№</th>
+          <th>影響度<span class="th-sub">解決すれば他も動くか</span></th>
+          <th>着手しやすさ<span class="th-sub">明日から始められるか</span></th>
+          <th>難易度<span class="th-sub">低いほど高評価</span></th>
+          <th>即効性<span class="th-sub">3ヶ月以内に効果が出るか</span></th>
+          <th>合計</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>01</td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>02</td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>03</td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>04</td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>05</td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>06</td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>07</td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>08</td><td></td><td></td><td></td><td></td><td></td></tr>
+      </tbody>
+    </table>
+
+    <div style="font-size: 8pt; color: var(--mute); margin-top: 2mm; text-align: right;">採点基準: ◎ = 3点 ／ ○ = 2点 ／ △ = 1点</div>
+
+    <div class="bottleneck-box">
+      <div class="bottleneck-hint">最も合計点が高い課題を選び、自分の言葉で書き直す。</div>
+
+      <div style="display:flex; gap: 6mm; align-items: flex-end;">
+        <div style="flex: 0 0 22mm;">
+          <div class="field-label" style="margin-bottom: 2mm;">№ 選択</div>
+          <div class="writing-area short"></div>
+        </div>
+        <div style="flex: 1;">
+          <div class="field-label" style="margin-bottom: 2mm;">最優先課題 ／ 課題内容を自分の言葉で書き直す</div>
+          <div class="writing-area"></div>
+        </div>
+      </div>
+
+      <div class="reason-area" style="margin-top: 4mm;">
+        <div class="reason-block">
+          <div class="label">WHY THIS ONE? ／ 選んだ理由</div>
+          <div class="ja">迷ったら「影響度」を最重視。1つが動けば他が連鎖で動く課題こそ、最優先に値する。</div>
+          <div class="writing-area"></div>
+          <div class="writing-area"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <div>KYOTO WORKATION / KOIKE SESSION</div>
+    <div class="mark">— 02 —</div>
+  </div>
+</section>
+
+<!-- ======================== STEP 03 · ① (Q1-Q4) ======================== -->
+<section class="page">
+  <div class="band">
+    <div class="left">
+      <span class="tag">SESSION 01</span>
+      <span class="accent-dot"></span>
+      <span>検証の問い / 8 QUESTIONS · Q1–Q4</span>
+    </div>
+    <div>STEP 03 / 04 · ①</div>
+  </div>
+
+  <div class="page-body">
+    <div class="step-header">
+      <div class="step-num">03</div>
+      <div class="step-title-wrap">
+        <div class="step-phase">VALIDATE ／ 検証</div>
+        <h2 class="step-title">8つの問いで、選んだ課題を検証する</h2>
+        <p class="step-desc">
+          最優先に選んだ課題は、本当に<strong>「真の課題」</strong>か。8つの角度から問い直す。
+        </p>
+      </div>
+    </div>
+
+    <div class="directive">
+      <div>正解を書こうとしない。頭に浮かんだ言葉をそのまま置く。</div>
+      <div class="target"><span class="timer">10 MIN</span></div>
+    </div>
+
+    <div class="q-item">
+      <div class="q-num">Q1</div>
+      <div class="q-body">
+        <div class="q-text">この課題を解決すれば、他のどの課題が<strong>連鎖的に解消</strong>されるか？</div>
+        <div class="q-line"></div>
+        <div class="q-line"></div>
+      </div>
+    </div>
+
+    <div class="q-item">
+      <div class="q-num">Q2</div>
+      <div class="q-body">
+        <div class="q-text">これは<strong>「本当の課題」</strong>か、それとも別の課題の<strong>「症状」</strong>ではないか？</div>
+        <div class="q-line"></div>
+        <div class="q-line"></div>
+      </div>
+    </div>
+
+    <div class="q-item">
+      <div class="q-num">Q3</div>
+      <div class="q-body">
+        <div class="q-text">なぜこの課題は、これまで<strong>解決されずに残っている</strong>のか？</div>
+        <div class="q-line"></div>
+        <div class="q-line"></div>
+      </div>
+    </div>
+
+    <div class="q-item">
+      <div class="q-num">Q4</div>
+      <div class="q-body">
+        <div class="q-text">この課題に取り組むことへの<strong>「心理的な抵抗」</strong>はあるか？あるなら何か？</div>
+        <div class="q-line"></div>
+        <div class="q-line"></div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 4mm;">
+      <strong>Q1-Q4 の狙い —</strong> 波及効果・根本性・放置の理由・心理的抵抗。この4角度で「本当にこの課題か？」を検証する。
+    </div>
+  </div>
+
+  <div class="footer">
+    <div>KYOTO WORKATION / KOIKE SESSION</div>
+    <div class="mark">— 03 · ① —</div>
+  </div>
+</section>
+
+<!-- ======================== STEP 03 · ② (Q5-Q8) ======================== -->
+<section class="page">
+  <div class="band">
+    <div class="left">
+      <span class="tag">SESSION 01</span>
+      <span class="accent-dot"></span>
+      <span>検証の問い / 8 QUESTIONS · Q5–Q8</span>
+    </div>
+    <div>STEP 03 / 04 · ②</div>
+  </div>
+
+  <div class="page-body">
+    <div class="q-item">
+      <div class="q-num">Q5</div>
+      <div class="q-body">
+        <div class="q-text">この課題が<strong>解決された状態</strong>を、具体的に描写できるか？</div>
+        <div class="q-line"></div>
+        <div class="q-line"></div>
+      </div>
+    </div>
+
+    <div class="q-item">
+      <div class="q-num">Q6</div>
+      <div class="q-body">
+        <div class="q-text">「<strong>解きやすいから</strong>」選んでいないか？もっと直視したくない課題はないか？</div>
+        <div class="q-line"></div>
+        <div class="q-line"></div>
+      </div>
+    </div>
+
+    <div class="q-item">
+      <div class="q-num">Q7</div>
+      <div class="q-body">
+        <div class="q-text">この課題に<strong>半年間取り組まなかったら</strong>、どうなるか？</div>
+        <div class="q-line"></div>
+        <div class="q-line"></div>
+      </div>
+    </div>
+
+    <div class="q-item">
+      <div class="q-num">Q8</div>
+      <div class="q-body">
+        <div class="q-text">この課題を解決するための<strong>最初の一歩</strong>は何か？それは明日できるか？</div>
+        <div class="q-line"></div>
+        <div class="q-line"></div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 4mm;">
+      <strong>Q6で別の課題が浮かんだら —</strong> STEP 02に戻ってよい。検証の結果、最優先が変わることこそ、<strong>このSTEPの本来の成果だ。</strong>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div>KYOTO WORKATION / KOIKE SESSION</div>
+    <div class="mark">— 03 · ② —</div>
+  </div>
+</section>
+
+<!-- ======================== STEP 04 · ① (Redefine) ======================== -->
+<section class="page">
+  <div class="band">
+    <div class="left">
+      <span class="tag">SESSION 01</span>
+      <span class="accent-dot"></span>
+      <span>真の課題の再定義 / REDEFINE</span>
+    </div>
+    <div>STEP 04 / 04 · ①</div>
+  </div>
+
+  <div class="page-body">
+    <div class="step-header">
+      <div class="step-num">04</div>
+      <div class="step-title-wrap">
+        <div class="step-phase">CONVERGE ／ 収束</div>
+        <h2 class="step-title">真の課題を再定義し、理由とともに宣言する</h2>
+        <p class="step-desc">
+          検証を経て磨き上げた課題を、<strong>一行</strong>に圧縮する。「なぜこれが最優先なのか」の理由とセットで。
+        </p>
+      </div>
+    </div>
+
+    <div class="redef-wrap">
+      <div class="redef-label">THE ONE SENTENCE</div>
+      <div class="redef-syntax">
+        私の最優先課題は、<span class="slot">＿＿＿＿</span>である。<br>
+        なぜなら、<span class="slot">＿＿＿＿</span>だからだ。
+      </div>
+
+      <div class="redef-write">
+        <div class="redef-write-intro">私の最優先課題は、</div>
+        <div class="redef-write-line"></div>
+        <div class="redef-write-line"></div>
+        <div class="redef-write-line"></div>
+        <div class="redef-write-line"></div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 5mm;">
+      <strong>例 —</strong> 「私の最優先課題は、<strong>『60点の出来で仕事を任せる勇気がないこと』</strong>である。なぜなら、これが解決すれば営業時間の確保も、チーム育成も連鎖的に動き出すからだ。」
+    </div>
+
+    <div class="callout" style="margin-top: 3mm;">
+      <strong>書けないなら —</strong> 理由が出てこないなら、Q1に戻る。「なぜこれか」を言語化できたものだけが、持ち帰れる。
+    </div>
+  </div>
+
+  <div class="footer">
+    <div>KYOTO WORKATION / KOIKE SESSION</div>
+    <div class="mark">— 04 · ① —</div>
+  </div>
+</section>
+
+<!-- ======================== STEP 04 · ② (Share) ======================== -->
+<section class="page">
+  <div class="band">
+    <div class="left">
+      <span class="tag">SESSION 01</span>
+      <span class="accent-dot"></span>
+      <span>宣言とフィードバック / SHARE & DECLARE</span>
+    </div>
+    <div>STEP 04 / 04 · ②</div>
+  </div>
+
+  <div class="page-body">
+    <div class="share-panel">
+      <div class="share-title">SHARE &amp; FEEDBACK ／ グループ・15分</div>
+      <div class="share-desc">
+        真の課題と理由を宣言し、互いに「それは本当に最優先か？」「症状じゃないか？」「もっと深い課題はないか？」を問い返す。
+      </div>
+      <div class="share-grid">
+        <div class="share-box">
+          <div class="sb-label">MEMBER A — FEEDBACK FOR ME</div>
+          <div class="sb-line"></div>
+          <div class="sb-line"></div>
+          <div class="sb-line"></div>
+        </div>
+        <div class="share-box">
+          <div class="sb-label">MEMBER B — FEEDBACK FOR ME</div>
+          <div class="sb-line"></div>
+          <div class="sb-line"></div>
+          <div class="sb-line"></div>
+        </div>
+      </div>
+
+      <div style="margin-top: 6mm; padding-top: 4mm; border-top: 1px dashed #999;">
+        <div class="sb-label" style="font-family:'Bebas Neue',sans-serif; letter-spacing:0.2em; font-size:10pt; color: var(--accent); margin-bottom: 3mm;">REVISION ／ 聞いた上で、書き直すなら</div>
+        <div class="sb-line" style="height: 9mm;"></div>
+        <div class="sb-line" style="height: 9mm;"></div>
+        <div class="sb-line" style="height: 9mm;"></div>
+      </div>
+    </div>
+
+    <div class="goal-strip">
+      <div>
+        <div class="gl">SESSION 1 — GOAL STATE</div>
+        <div class="gt">私が最優先で解くべき課題と、<br>その理由が明確になっている。</div>
+      </div>
+      <div class="arrow">→</div>
+    </div>
+
+    <div class="callout" style="margin-top: 6mm;">
+      <strong>持ち帰るもの —</strong> 完璧な答えではなく、<strong>「これを解けば他が連鎖で動く」という確信の1行と、その理由。</strong>セッション2は、この課題を「明日やる2分の行動」に翻訳する時間になる。
+    </div>
+  </div>
+
+  <div class="footer">
+    <div>KYOTO WORKATION / KOIKE SESSION</div>
+    <div class="mark">— 04 · FIN —</div>
+  </div>
+</section>
+
+</body>
+</html>

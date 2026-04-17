@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Session 1 Slides — 真のセンターピンを射抜く</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Noto+Serif+JP:wght@700;900&family=Bebas+Neue&family=JetBrains+Mono:wght@400;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0F0F0F;
+    --paper: #FAF8F3;
+    --accent: #D93A26;
+    --accent-deep: #8C1F10;
+    --gold: #B8934A;
+    --mute: #7A7A7A;
+    --soft: #EFEAE0;
+  }
+
+  html, body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: #222;
+    color: var(--ink);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  @page { size: 1920px 1080px; margin: 0; }
+
+  .deck {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+  }
+
+  .slide {
+    width: 1920px;
+    height: 1080px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    overflow: hidden;
+    background: var(--paper);
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transform-origin: center center;
+    transition: opacity 0.4s ease;
+  }
+  .slide.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .slide-counter {
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.15em;
+    color: rgba(255,255,255,0.5);
+    z-index: 9999;
+  }
+
+  /* Common chrome */
+  .chrome-top {
+    position: absolute;
+    top: 48px;
+    left: 64px;
+    right: 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.2em;
+    font-size: 18px;
+    color: var(--ink);
+    z-index: 3;
+  }
+  .chrome-top .brand { display: flex; align-items: center; gap: 14px; }
+  .chrome-top .brand::before {
+    content: ''; width: 18px; height: 18px;
+    background: var(--accent);
+    transform: rotate(45deg);
+  }
+  .chrome-top .page-id {
+    background: var(--ink); color: var(--paper);
+    padding: 4px 14px;
+    font-size: 14px;
+    letter-spacing: 0.25em;
+  }
+
+  .chrome-bottom {
+    position: absolute;
+    bottom: 40px;
+    left: 64px;
+    right: 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.25em;
+    font-size: 14px;
+    color: var(--mute);
+    border-top: 1px solid rgba(0,0,0,0.18);
+    padding-top: 14px;
+    z-index: 3;
+  }
+  .chrome-bottom .mark { color: var(--accent); font-weight: 700; }
+
+  /* ======= SLIDE 1: COVER ======= */
+  .cover {
+    background:
+      radial-gradient(circle at 85% 15%, rgba(217,58,38,0.12) 0%, transparent 45%),
+      radial-gradient(circle at 12% 90%, rgba(184,147,74,0.14) 0%, transparent 50%),
+      var(--paper);
+    justify-content: center;
+    align-items: center;
+    padding: 0 120px;
+  }
+  .cover-wrap {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+  .cover-kicker {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.4em;
+    font-size: 22px;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .cover-kicker::before {
+    content: ''; width: 80px; height: 2px; background: var(--accent);
+  }
+  .cover-title {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: 160px;
+    line-height: 1.05;
+    color: var(--ink);
+    letter-spacing: 0.01em;
+  }
+  .cover-title .em {
+    display: inline-block;
+    background: linear-gradient(180deg, transparent 60%, rgba(217,58,38,0.3) 60%, rgba(217,58,38,0.3) 88%, transparent 88%);
+    padding: 0 10px;
+  }
+  .cover-sub {
+    font-size: 28px;
+    font-weight: 300;
+    line-height: 1.8;
+    color: #2A2A2A;
+    max-width: 1300px;
+  }
+  .cover-sub strong { color: var(--accent-deep); font-weight: 700; }
+  .cover-quote {
+    border-left: 6px solid var(--accent);
+    padding: 24px 32px;
+    background: rgba(255,255,255,0.6);
+    margin-top: 24px;
+    max-width: 1200px;
+  }
+  .cover-quote .lbl {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.3em;
+    font-size: 16px;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .cover-quote .txt {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 700;
+    font-size: 42px;
+    line-height: 1.5;
+  }
+
+  /* ======= SLIDE 2: GOAL ======= */
+  .goal {
+    justify-content: center;
+    padding: 0 160px;
+  }
+  .section-kicker {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.4em;
+    font-size: 22px;
+    color: var(--accent);
+    margin-bottom: 40px;
+    display: flex; align-items: center; gap: 20px;
+  }
+  .section-kicker::before {
+    content:''; width:60px; height:2px; background: var(--accent);
+  }
+  .goal h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: 96px;
+    line-height: 1.2;
+    color: var(--ink);
+    margin-bottom: 60px;
+  }
+  .goal h1 .hl {
+    background: linear-gradient(180deg, transparent 62%, rgba(217,58,38,0.28) 62%, rgba(217,58,38,0.28) 88%, transparent 88%);
+    padding: 0 8px;
+  }
+  .goal-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 36px;
+    max-width: 1500px;
+  }
+  .goal-card {
+    background: #FFF;
+    padding: 36px 40px;
+    border-top: 4px solid var(--accent);
+  }
+  .goal-card .num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    margin-bottom: 12px;
+  }
+  .goal-card .t {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: 36px;
+    color: var(--ink);
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+  .goal-card .d {
+    font-size: 20px;
+    line-height: 1.7;
+    color: #333;
+  }
+
+  /* ======= ZEN ======= */
+  .zen {
+    background: var(--ink);
+    color: var(--paper);
+    justify-content: center;
+    align-items: center;
+    padding: 0 120px;
+  }
+  .zen .section-kicker { color: var(--accent); }
+  .zen-hook {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 700;
+    font-size: 52px;
+    line-height: 1.6;
+    color: #BBB;
+    margin-bottom: 60px;
+    max-width: 1400px;
+  }
+  .zen-punch {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: 148px;
+    line-height: 1.1;
+    color: var(--paper);
+    letter-spacing: 0.02em;
+  }
+  .zen-punch .accent { color: var(--accent); }
+  .zen-punch .hl {
+    display: inline-block;
+    background: linear-gradient(180deg, transparent 60%, rgba(217,58,38,0.45) 60%, rgba(217,58,38,0.45) 92%, transparent 92%);
+    padding: 0 12px;
+    color: var(--paper);
+  }
+  .zen-tag {
+    display: inline-block;
+    margin-top: 50px;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.3em;
+    font-size: 22px;
+    color: var(--accent);
+    border-top: 2px solid var(--accent);
+    padding-top: 14px;
+  }
+  .zen .chrome-top { color: #888; }
+  .zen .chrome-top .brand::before { background: var(--accent); }
+  .zen .chrome-top .page-id { background: var(--accent); color: #FFF; }
+  .zen .chrome-bottom { color: #555; border-top-color: #333; }
+
+  /* ======= CONCEPT ======= */
+  .concept {
+    padding: 140px 120px 100px;
+  }
+  .concept .badge {
+    display: inline-block;
+    background: var(--accent);
+    color: #FFF;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 0.25em;
+    padding: 8px 22px;
+    margin-bottom: 30px;
+  }
+  .concept h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: 108px;
+    line-height: 1.15;
+    color: var(--ink);
+    margin-bottom: 40px;
+  }
+  .concept h1 .strike {
+    color: #888;
+    text-decoration: line-through;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 5px;
+  }
+  .concept h1 .emph {
+    color: var(--accent);
+  }
+  .concept .lead {
+    font-size: 30px;
+    line-height: 1.8;
+    color: #2A2A2A;
+    max-width: 1400px;
+    margin-bottom: 50px;
+  }
+  .concept .lead strong { color: var(--accent-deep); font-weight: 700; }
+  .concept-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    max-width: 1600px;
+  }
+  .concept-card {
+    padding: 28px 32px;
+    background: #FFF;
+    border-left: 6px solid var(--ink);
+  }
+  .concept-card.bad { border-left-color: #999; background: #F2EEE6; }
+  .concept-card.good { border-left-color: var(--accent); }
+  .concept-card .cl {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.25em;
+    font-size: 18px;
+    color: var(--mute);
+    margin-bottom: 10px;
+  }
+  .concept-card.good .cl { color: var(--accent); }
+  .concept-card .ct {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: 36px;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+
+  /* ======= CONCEPT 4-AXIS (2x2 grid) ======= */
+  .concept-grid4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 14px;
+    max-width: 1600px;
+  }
+  .axis-card {
+    background: #FFF;
+    border: 2px solid rgba(0,0,0,0.1);
+    border-top: 4px solid var(--accent);
+    padding: 16px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .axis-card .axis-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    line-height: 1;
+  }
+  .axis-card .axis-title {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: 26px;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+  .axis-card .axis-desc {
+    font-size: 18px;
+    line-height: 1.5;
+    color: #444;
+  }
+
+  /* ======= BRIDGE ======= */
+  .bridge {
+    background: var(--ink);
+    color: var(--paper);
+    justify-content: center;
+    padding: 0 120px;
+  }
+  .bridge .section-kicker { color: var(--accent); margin-bottom: 24px; }
+  .bridge-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 360px;
+    line-height: 0.85;
+    color: var(--paper);
+    margin-bottom: 10px;
+    position: relative;
+    display: inline-block;
+  }
+  .bridge-num::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: 20px;
+    width: 100%; height: 16px;
+    background: var(--accent);
+  }
+  .bridge h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: 110px;
+    line-height: 1.15;
+    color: var(--paper);
+    margin-top: 30px;
+    margin-bottom: 50px;
+  }
+  .bridge h1 .emph { color: var(--accent); }
+  .bridge .sub {
+    font-size: 30px;
+    line-height: 1.8;
+    color: #BBB;
+    max-width: 1500px;
+  }
+  .bridge .meta {
+    display: flex;
+    gap: 30px;
+    margin-top: 60px;
+  }
+  .bridge .meta .chip {
+    border: 2px solid var(--accent);
+    color: var(--accent);
+    padding: 10px 24px;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.25em;
+    font-size: 22px;
+  }
+  .bridge .chrome-top { color: #888; }
+  .bridge .chrome-top .page-id { background: var(--accent); color:#FFF; }
+  .bridge .chrome-bottom { color:#555; border-top-color:#333; }
+
+  /* ======= INSTRUCTION ======= */
+  .instr {
+    padding: 140px 120px 100px;
+  }
+  .instr-head {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    margin-bottom: 40px;
+  }
+  .instr-head .step-tag {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.3em;
+    padding: 8px 18px;
+  }
+  .instr-head .part-tag {
+    background: var(--accent);
+    color: #FFF;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.3em;
+    padding: 8px 18px;
+  }
+  .instr-head .timer-tag {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 44px;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+  }
+  .instr h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: 84px;
+    line-height: 1.2;
+    color: var(--ink);
+    margin-bottom: 50px;
+  }
+  .instr h1 .emph { color: var(--accent); }
+
+  .instr-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 50px;
+  }
+  .instr-col {
+    background: #FFF;
+    padding: 32px 36px;
+    border-top: 4px solid var(--ink);
+  }
+  .instr-col.accent { border-top-color: var(--accent); }
+  .instr-col .num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.25em;
+    color: var(--mute);
+    margin-bottom: 12px;
+  }
+  .instr-col.accent .num { color: var(--accent); }
+  .instr-col .hd {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: 36px;
+    color: var(--ink);
+    margin-bottom: 18px;
+  }
+  .instr-col .bp {
+    font-size: 22px;
+    line-height: 1.85;
+    color: #2A2A2A;
+  }
+  .instr-col .bp strong { color: var(--accent-deep); }
+  .instr-rule {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 24px 32px;
+    font-size: 26px;
+    line-height: 1.6;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .instr-rule .lbl {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--accent);
+    letter-spacing: 0.25em;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  /* ======= REDEFINE (STEP 04 構文) ======= */
+  .redefine {
+    padding: 108px 120px 90px;
+  }
+  .redefine-head {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    margin-bottom: 22px;
+  }
+  .redefine-head .step-tag {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.3em;
+    padding: 8px 18px;
+  }
+  .redefine-head .part-tag {
+    background: var(--accent);
+    color: #FFF;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.3em;
+    padding: 8px 18px;
+  }
+  .redefine-head .timer-tag {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40px;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+  }
+  .redefine h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: 42px;
+    line-height: 1.3;
+    color: var(--ink);
+    margin-bottom: 20px;
+  }
+  .redefine h1 .emph { color: var(--accent); }
+
+  .redefine-stage {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 34px 48px 38px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .redefine-stage::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 140px; height: 140px;
+    background: var(--accent);
+    clip-path: polygon(100% 0, 0 0, 100% 100%);
+  }
+  .redefine-stage .stage-label {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.3em;
+    font-size: 15px;
+    color: var(--accent);
+    margin-bottom: 16px;
+    position: relative; z-index: 1;
+  }
+  .redefine-syntax {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 700;
+    font-size: 40px;
+    line-height: 1.55;
+    color: var(--paper);
+    position: relative; z-index: 1;
+  }
+  .redefine-syntax .slot {
+    display: inline-block;
+    background: rgba(217,58,38,0.35);
+    padding: 0 14px;
+    border-bottom: 3px solid var(--accent);
+    color: #FFE4DF;
+    font-weight: 900;
+    margin: 0 4px;
+    line-height: 1.35;
+  }
+  .redefine-example {
+    background: var(--soft);
+    border-left: 5px solid var(--accent);
+    padding: 16px 24px;
+    margin-bottom: 18px;
+  }
+  .redefine-example .ex-label {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.3em;
+    font-size: 13px;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .redefine-example .ex-text {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 18px;
+    line-height: 1.65;
+    color: #222;
+  }
+  .redefine-example .ex-text strong {
+    color: var(--accent-deep);
+    font-weight: 900;
+  }
+  .redefine .instr-rule { margin-top: 0; font-size: 22px; padding: 18px 28px; }
+  .redefine .instr-rule .lbl { font-size: 18px; }
+
+</style>
+</head>
+<body>
+
+<div class="deck">
+
+  <!-- ============== SLIDE 01: COVER ============== -->
+  <section class="slide cover">
+    <div class="chrome-top">
+      <div class="brand">KYOTO WORKATION 2026 — KOIKE SESSION</div>
+      <div class="page-id">SESSION 01</div>
+    </div>
+    <div class="cover-wrap">
+      <div class="cover-kicker">WORKSHEET SESSION — 15:00 – 16:00</div>
+      <h1 class="cover-title">真の<span class="em">センターピン</span>を<br>射抜く。</h1>
+      <p class="cover-sub">
+        「必要要素」から「最優先課題」を特定し、検証を経て「真の課題」を一行で定義する60分。
+      </p>
+      <div class="cover-quote">
+        <div class="lbl">KILLER PHRASE</div>
+        <div class="txt">全部やるは、何もやらないと同じだ。</div>
+      </div>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 01</div>
+      <div class="mark">— 01 / 18 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 02: TODAY'S GOAL ============== -->
+  <section class="slide goal">
+    <div class="chrome-top">
+      <div class="brand">KYOTO WORKATION 2026 — KOIKE SESSION</div>
+      <div class="page-id">SESSION 01 / GOAL</div>
+    </div>
+    <div class="section-kicker">TODAY'S GOAL ／ 今日のゴール</div>
+    <h1>
+      必要要素の課題から、<span class="hl">最優先の1つ</span>を選び抜く。
+    </h1>
+    <div class="goal-cards">
+      <div class="goal-card">
+        <div class="num">01 — PRIORITY</div>
+        <div class="t">最優先課題を<br>1つに絞る</div>
+        <div class="d">必要要素ごとの課題を可視化し、影響度・着手しやすさ・難易度・即効性の4軸で<strong>最優先の1つ</strong>を特定する。</div>
+      </div>
+      <div class="goal-card">
+        <div class="num">02 — DECLARATION</div>
+        <div class="t">真の課題を<br>一行で定義する</div>
+        <div class="d">8つの検証を経て磨き上げた<strong>確信の1行</strong>と、その理由を京都から持ち帰る。</div>
+      </div>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 01</div>
+      <div class="mark">— 02 / 18 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 03: ZEN — 全部やるは失敗する ============== -->
+  <section class="slide zen">
+    <div class="chrome-top">
+      <div class="brand">LECTURE — THE PRIORITY TRAP</div>
+      <div class="page-id">CONCEPT · 01</div>
+    </div>
+    <div>
+      <div class="section-kicker">THE PRIORITY TRAP</div>
+      <p class="zen-hook">
+        課題は見えている。やるべきことも分かっている。<br>
+        なのに、3ヶ月経っても何も変わっていない。<br>
+        理由は単純だ。全部やろうとしている。
+      </p>
+      <div class="zen-punch">
+        <span class="hl">全部やる</span>は、<span class="hl">何もやらない</span>と同じだ。
+      </div>
+      <div class="zen-tag">FOCUS ON THE ONE THAT MOVES EVERYTHING</div>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 01</div>
+      <div class="mark">— 03 / 18 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 04: CONCEPT — なぜ1つに絞るのか ============== -->
+  <section class="slide concept">
+    <div class="chrome-top">
+      <div class="brand">LECTURE — CORE CONCEPTS</div>
+      <div class="page-id">CONCEPT · 02</div>
+    </div>
+    <div class="badge">CONCEPT — WHY PRIORITIZE</div>
+    <h1>
+      なぜ<span class="emph">1つ</span>なのか。
+    </h1>
+    <p class="lead">
+      制約理論（TOC）——チェーン全体の強度は、<strong>最も弱い1つのリング</strong>で決まる。<br>
+      最も弱い1点以外をいくら強化しても、チェーン全体の強度は変わらない。
+    </p>
+    <div class="concept-body">
+      <div class="concept-card bad">
+        <div class="cl">SCATTER ／ 分散の罠</div>
+        <div class="ct">5つの課題に20%ずつ<br>＝ どれも閾値を超えない</div>
+      </div>
+      <div class="concept-card good">
+        <div class="cl">FOCUS ／ 集中の原則</div>
+        <div class="ct">制約の1点に100%<br>＝ 堰き止めが外れ、全体が動く</div>
+      </div>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 01</div>
+      <div class="mark">— 04 / 18 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 05: CONCEPT — 問題設定が9割 ============== -->
+  <section class="slide concept">
+    <div class="chrome-top">
+      <div class="brand">LECTURE — CORE CONCEPTS</div>
+      <div class="page-id">CONCEPT · 03</div>
+    </div>
+    <div class="badge">CONCEPT — PROBLEM FRAMING</div>
+    <h1>
+      解き方の前に、<br>
+      <span class="emph">問い</span>を疑え。
+    </h1>
+    <p class="lead">
+      アルバート・アインシュタイン ——<br>
+      「1時間で問題を解くなら、<strong>55分を問題の定義に使い</strong>、5分で解く」。<br>
+      多くの人は、課題を見つけた瞬間に解き始める。だが、問いが間違っていれば解は無意味だ。
+    </p>
+    <div class="concept-body">
+      <div class="concept-card bad">
+        <div class="cl">SOLVE FIRST ／ いきなり解く</div>
+        <div class="ct">課題を見つけた → すぐ解く<br>→ 3ヶ月後、同じ問題が再発</div>
+      </div>
+      <div class="concept-card good">
+        <div class="cl">FRAME FIRST ／ まず疑う</div>
+        <div class="ct">課題を疑う → 検証する<br>→ 真の課題を解く → 連鎖解決</div>
+      </div>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 01</div>
+      <div class="mark">— 05 / 18 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 06: CONCEPT — 課題 vs 症状 ============== -->
+  <section class="slide concept" style="padding: 120px 120px 90px;">
+    <div class="chrome-top">
+      <div class="brand">LECTURE — CORE CONCEPTS</div>
+      <div class="page-id">CONCEPT · 03</div>
+    </div>
+    <div class="badge">CONCEPT — TRUE CHALLENGE</div>
+    <h1 style="font-size: 88px; margin-bottom: 24px;">
+      それは<span class="strike">課題</span>ではなく、<span class="emph">症状</span>だ。
+    </h1>
+    <p class="lead" style="margin-bottom: 32px;">
+      多くの人が「課題」だと思っているものは、真の課題が引き起こした<strong>「症状」</strong>にすぎない。<br>
+      症状を潰しても、根っこが残る限り、また別の症状が出る。
+    </p>
+    <div class="concept-body" style="gap: 24px;">
+      <div class="concept-card bad" style="padding: 22px 28px;">
+        <div class="cl">SYMPTOM ／ 症状</div>
+        <div class="ct" style="font-size: 32px;">「売上が下がっている」</div>
+      </div>
+      <div class="concept-card good" style="padding: 22px 28px;">
+        <div class="cl">TRUE CHALLENGE ／ 真の課題</div>
+        <div class="ct" style="font-size: 32px;">「既存顧客への提案が<br>月1回に落ちている」</div>
+      </div>
+      <div class="concept-card bad" style="padding: 22px 28px;">
+        <div class="cl">SYMPTOM ／ 症状</div>
+        <div class="ct" style="font-size: 32px;">「部下が育たない」</div>
+      </div>
+      <div class="concept-card good" style="padding: 22px 28px;">
+        <div class="cl">TRUE CHALLENGE ／ 真の課題</div>
+        <div class="ct" style="font-size: 32px;">「60点で任せる<br>判断基準がない」</div>
+      </div>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 01</div>
+      <div class="mark">— 06 / 18 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 07: CONCEPT — 4つの評価軸 ============== -->
+  <section class="slide concept">
+    <div class="chrome-top">
+      <div class="brand">LECTURE — CORE CONCEPTS</div>
+      <div class="page-id">CONCEPT · 04</div>
+    </div>
+    <div class="badge">CONCEPT — EVALUATION AXES</div>
+    <h1>
+      <span class="strike">感覚</span>で選ぶな、<br>
+      <span class="emph">構造</span>で選べ。
+    </h1>
+    <p class="lead">
+      「なんとなく大事そう」で選ぶと、解きやすい課題に逃げる。<br>
+      4つの軸で構造的に評価する。
+    </p>
+    <div class="concept-grid4">
+      <div class="axis-card">
+        <div class="axis-num">01</div>
+        <div class="axis-title">影響度</div>
+        <div class="axis-desc">解決すれば他の課題も連鎖で動くか</div>
+      </div>
+      <div class="axis-card">
+        <div class="axis-num">02</div>
+        <div class="axis-title">着手しやすさ</div>
+        <div class="axis-desc">明日から取りかかれるか</div>
+      </div>
+      <div class="axis-card">
+        <div class="axis-num">03</div>
+        <div class="axis-title">難易度</div>
+        <div class="axis-desc">自分の力で解決可能か</div>
+      </div>
+      <div class="axis-card">
+        <div class="axis-num">04</div>
+        <div class="axis-title">即効性</div>
+        <div class="axis-desc">3ヶ月以内に効果が見えるか</div>
+      </div>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 01</div>
+      <div class="mark">— 07 / 18 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 08: CONCEPT — 宣言の力 ============== -->
+  <section class="slide concept">
+    <div class="chrome-top">
+      <div class="brand">LECTURE — CORE CONCEPTS</div>
+      <div class="page-id">CONCEPT · 06</div>
+    </div>
+    <div class="badge">CONCEPT — COMMITMENT</div>
+    <h1>
+      書け。声に出せ。<br>
+      <span class="emph">握りしめろ</span>。
+    </h1>
+    <p class="lead">
+      心理学の<strong>一貫性の原理</strong>（チャルディーニ）——<br>
+      人は「公に宣言したこと」に対して行動を一致させようとする。<br>
+      頭の中の曖昧な認識を1文に圧縮し、声に出す。その瞬間、思考は行動に変わる。
+    </p>
+    <div class="concept-body">
+      <div class="concept-card bad">
+        <div class="cl">VAGUE ／ 曖昧なまま</div>
+        <div class="ct">「頭では分かっている」<br>→ 言語化しない → 1週間で霧散</div>
+      </div>
+      <div class="concept-card good">
+        <div class="cl">DECLARE ／ 宣言する</div>
+        <div class="ct">1文に圧縮 → 声に出す<br>→ 公的コミットメント → 行動が変わる</div>
+      </div>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 01</div>
+      <div class="mark">— 08 / 18 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 09: STEP 01 BRIDGE ============== -->
+  <section class="slide bridge">
+    <div class="chrome-top">
+      <div class="brand">WORKSHOP — BEGIN</div>
+      <div class="page-id">STEP 01 / 04</div>
+    </div>
+    <div>
+      <div class="section-kicker">DIVERGE ／ 発散</div>
+      <div class="bridge-num">01</div>
+      <h1>
+        必要要素ごとに、<span class="emph">現在の課題</span>を洗い出す。
+      </h1>
+      <p class="sub">
+        前セッションで抽出した「目標達成に必要な要素」を手元に置き、<br>
+        それぞれに対する「今の課題」を具体的に書き出す。<br>
+        事実ベースで。感覚ではなく。
+      </p>
+      <div class="meta">
+        <div class="chip">8 MIN</div>
+      </div>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 01</div>
+      <div class="mark">— 09 / 18 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 10: STEP 01 INSTRUCTION ============== -->
+  <section class="slide instr">
+    <div class="chrome-top">
+      <div class="brand">WORKSHOP — INSTRUCTION</div>
+      <div class="page-id">STEP 01 · IDENTIFY</div>
+    </div>
+    <div class="instr-head">
+      <span class="step-tag">STEP 01</span>
+      <span class="part-tag">IDENTIFY ／ 課題洗い出し</span>
+      <span class="timer-tag">08:00</span>
+    </div>
+    <h1>
+      各必要要素に対して、<span class="emph">今の課題</span>を書き出す。
+    </h1>
+    <div class="instr-body">
+      <div class="instr-col">
+        <div class="num">LEFT — 必要要素</div>
+        <div class="hd">前セッションから転記</div>
+        <div class="bp">
+          前のワークシートに書いた「目標達成に必要な要素」をそのまま書き写す。チェックリスト形式でOK。
+        </div>
+      </div>
+      <div class="instr-col accent">
+        <div class="num">RIGHT — 現在の課題</div>
+        <div class="hd">その要素に対する障壁</div>
+        <div class="bp">
+          「なぜその要素が満たせていないのか」を具体的に書く。<strong>「頑張りが足りない」禁止</strong>。事実・数字・場面で書く。
+        </div>
+      </div>
+    </div>
+    <div class="instr-rule">
+      <span class="lbl">▶ THE RULE</span>
+      <span>課題は具体的に。「週3回の訪問が月1回になっている」「提案書の雛形がない」のように、事実ベースで書く。</span>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 01</div>
+      <div class="mark">— 10 / 18 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 11: STEP 02 BRIDGE ============== -->
+  <section class="slide bridge">
+    <div class="chrome-top">
+      <div class="brand">WORKSHOP — SELECT</div>
+      <div class="page-id">STEP 02 / 04</div>
+    </div>
+    <div>
+      <div class="section-kicker">EVALUATE ／ 評価・選択</div>
+      <div class="bridge-num">02</div>
+      <h1>
+        4つの軸で、<span class="emph">最優先課題</span>を1つ選ぶ。
+      </h1>
+      <p class="sub">
+        感覚で「大事そう」を選ぶと、無意識に解きやすい課題に逃げる。<br>
+        影響度・着手しやすさ・難易度・即効性——構造的に評価して選ぶ。
+      </p>
+      <div class="meta">
+        <div class="chip">7 MIN</div>
+        <div class="chip">PICK ONE</div>
+      </div>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 01</div>
+      <div class="mark">— 11 / 18 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 12: STEP 02 INSTRUCTION ============== -->
+  <section class="slide instr">
+    <div class="chrome-top">
+      <div class="brand">WORKSHOP — INSTRUCTION</div>
+      <div class="page-id">STEP 02 · EVALUATE</div>
+    </div>
+    <div class="instr-head">
+      <span class="step-tag">STEP 02</span>
+      <span class="part-tag">EVALUATE ／ 最優先課題</span>
+      <span class="timer-tag">07:00</span>
+    </div>
+    <h1>
+      評価マトリクスで採点し、<span class="emph">最優先</span>を選ぶ。
+    </h1>
+    <div class="instr-body">
+      <div class="instr-col">
+        <div class="num">MATRIX — 4軸で採点</div>
+        <div class="hd">◎=3 / ○=2 / △=1</div>
+        <div class="bp">
+          STEP 01の各課題を4軸（影響度・着手しやすさ・難易度・即効性）で採点し、合計点を出す。
+        </div>
+      </div>
+      <div class="instr-col accent">
+        <div class="num">THE ONE — 最優先課題</div>
+        <div class="hd">合計点が最も高い1つ</div>
+        <div class="bp">
+          選んだ課題を<strong>自分の言葉で書き直す</strong>。「なぜこれが最優先か」の理由も1行で。
+        </div>
+      </div>
+    </div>
+    <div class="instr-rule">
+      <span class="lbl">▶ 迷ったとき</span>
+      <span>合計点が同じなら「影響度」を最重視せよ。1つが動けば他が連鎖で動く課題こそ、最優先に値する。</span>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 01</div>
+      <div class="mark">— 12 / 18 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 13: STEP 03 BRIDGE ============== -->
+  <section class="slide bridge">
+    <div class="chrome-top">
+      <div class="brand">WORKSHOP — ANALYZE</div>
+      <div class="page-id">STEP 03 / 04</div>
+    </div>
+    <div>
+      <div class="section-kicker">VALIDATE ／ 検証</div>
+      <div class="bridge-num">03</div>
+      <h1>
+        8つの問いで、<span class="emph">本当にその課題か</span>を検証する。
+      </h1>
+      <p class="sub">
+        選んだ課題が「真の課題」かどうか。8つの角度から問い直す。<br>
+        ここで課題が変わることこそ、検証の本来の成果だ。
+      </p>
+      <div class="meta">
+        <div class="chip">10 MIN</div>
+        <div class="chip">8 QUESTIONS</div>
+      </div>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 01</div>
+      <div class="mark">— 13 / 18 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 14: STEP 03 Q1-Q4 INSTRUCTION ============== -->
+  <section class="slide instr">
+    <div class="chrome-top">
+      <div class="brand">WORKSHOP — INSTRUCTION</div>
+      <div class="page-id">STEP 03 · Q1-Q4</div>
+    </div>
+    <div class="instr-head">
+      <span class="step-tag">STEP 03</span>
+      <span class="part-tag">VALIDATE ／ Q1-Q4</span>
+      <span class="timer-tag">05:00</span>
+    </div>
+    <h1>
+      波及効果と根本性を検証する（Q1-Q4）
+    </h1>
+    <div class="instr-body">
+      <div class="instr-col">
+        <div class="num">Q1-Q2 IMPACT ／ 波及と根本</div>
+        <div class="hd">連鎖と本質を問う</div>
+        <div class="bp">
+          <strong>Q1</strong> この課題を解決すれば、他のどの課題が連鎖的に解消されるか？ <strong>Q2</strong> これは「本当の課題」か、別の課題の「症状」ではないか？
+        </div>
+      </div>
+      <div class="instr-col accent">
+        <div class="num">Q3-Q4 RESISTANCE ／ 抵抗と放置</div>
+        <div class="hd">なぜ残っているかを問う</div>
+        <div class="bp">
+          <strong>Q3</strong> なぜこの課題は、これまで解決されずに残っているのか？ <strong>Q4</strong> この課題に取り組むことへの「心理的な抵抗」はあるか？あるなら何か？
+        </div>
+      </div>
+    </div>
+    <div class="instr-rule">
+      <span class="lbl">▶ THE RULE</span>
+      <span>頭で整えない。最初に浮かんだ言葉をそのまま書く。取り繕うと、真の課題は隠れる。</span>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 01</div>
+      <div class="mark">— 14 / 18 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 15: STEP 03 Q5-Q8 INSTRUCTION ============== -->
+  <section class="slide instr">
+    <div class="chrome-top">
+      <div class="brand">WORKSHOP — INSTRUCTION</div>
+      <div class="page-id">STEP 03 · Q5-Q8</div>
+    </div>
+    <div class="instr-head">
+      <span class="step-tag">STEP 03</span>
+      <span class="part-tag">VALIDATE ／ Q5-Q8</span>
+      <span class="timer-tag">05:00</span>
+    </div>
+    <h1>
+      逃げと実行可能性を検証する（Q5-Q8）
+    </h1>
+    <div class="instr-body">
+      <div class="instr-col">
+        <div class="num">Q5-Q6 CLARITY ／ 明確さと逃げ</div>
+        <div class="hd">ゴールと逃避を問う</div>
+        <div class="bp">
+          <strong>Q5</strong> この課題が解決された状態を、具体的に描写できるか？ <strong>Q6</strong> 「解きやすいから」選んでいないか？もっと直視したくない課題はないか？
+        </div>
+      </div>
+      <div class="instr-col accent">
+        <div class="num">Q7-Q8 URGENCY ／ 緊急度と実行</div>
+        <div class="hd">放置の代償と一歩を問う</div>
+        <div class="bp">
+          <strong>Q7</strong> この課題に半年間取り組まなかったら、どうなるか？ <strong>Q8</strong> この課題を解決するための最初の一歩は何か？それは明日できるか？
+        </div>
+      </div>
+    </div>
+    <div class="instr-rule">
+      <span class="lbl">▶ Q6で別の課題が浮かんだら</span>
+      <span>STEP 02に戻ってよい。検証の結果、最優先が変わることこそ、このSTEPの本来の成果だ。</span>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 01</div>
+      <div class="mark">— 15 / 18 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 16: STEP 04 BRIDGE ============== -->
+  <section class="slide bridge">
+    <div class="chrome-top">
+      <div class="brand">WORKSHOP — CONVERGE</div>
+      <div class="page-id">STEP 04 / 04</div>
+    </div>
+    <div>
+      <div class="section-kicker">CONVERGE ／ 収束</div>
+      <div class="bridge-num">04</div>
+      <h1>
+        真の課題を一行で<span class="emph">定義</span>し、<br>
+        理由とともに<span class="emph">宣言</span>する。
+      </h1>
+      <p class="sub">
+        検証を経て磨き上げた課題を、月曜の朝にも効く1行に圧縮する。<br>
+        「なぜこれが最優先なのか」の理由とセットで。<br>
+        これが、京都から持ち帰る武器。
+      </p>
+      <div class="meta">
+        <div class="chip">REDEFINE 5 MIN</div>
+        <div class="chip">SHARE 15 MIN</div>
+      </div>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 01</div>
+      <div class="mark">— 16 / 18 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 17: STEP 04 REDEFINE ============== -->
+  <section class="slide redefine">
+    <div class="chrome-top">
+      <div class="brand">WORKSHOP — THE ONE SENTENCE</div>
+      <div class="page-id">STEP 04 · REDEFINE</div>
+    </div>
+    <div class="redefine-head">
+      <span class="step-tag">STEP 04</span>
+      <span class="part-tag">REDEFINE ／ 再定義</span>
+      <span class="timer-tag">05:00</span>
+    </div>
+    <h1>
+      私の最優先課題は、<span class="emph">〜</span>である。なぜなら、<span class="emph">〜</span>だからだ。
+    </h1>
+    <div class="redefine-stage">
+      <div class="stage-label">THE ONE SENTENCE</div>
+      <div class="redefine-syntax">
+        私の最優先課題は、<br>
+        <span class="slot">（検証を経た課題）</span><br>
+        である。なぜなら、<br>
+        <span class="slot">（これが最優先である理由）</span><br>
+        だからだ。
+      </div>
+    </div>
+    <div class="redefine-example">
+      <div class="ex-label">EXAMPLE ／ 例</div>
+      <div class="ex-text">
+        「私の最優先課題は、<strong>『60点の出来で仕事を任せる勇気がないこと』</strong>である。なぜなら、これが解決すれば営業時間の確保もチーム育成も連鎖的に動き出すからだ。」
+      </div>
+    </div>
+    <div class="instr-rule">
+      <span class="lbl">▶ THE ONE SENTENCE</span>
+      <span>理由が書けないなら、Q1に戻る。「なぜこれか」を言語化できたものだけが、持ち帰れる。</span>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 01</div>
+      <div class="mark">— 17 / 18 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 18: STEP 04 SHARE ============== -->
+  <section class="slide instr">
+    <div class="chrome-top">
+      <div class="brand">WORKSHOP — SHARE &amp; FEEDBACK</div>
+      <div class="page-id">STEP 04 · SHARE</div>
+    </div>
+    <div class="instr-head">
+      <span class="step-tag">STEP 04</span>
+      <span class="part-tag">SHARE ／ グループ</span>
+      <span class="timer-tag">15:00</span>
+    </div>
+    <h1>
+      理由とともに<span class="emph">宣言</span>し、互いに<span class="emph">問い返す</span>。
+    </h1>
+    <div class="instr-body">
+      <div class="instr-col">
+        <div class="num">DECLARE — 宣言する</div>
+        <div class="hd">課題と理由を声に出す</div>
+        <div class="bp">
+          「私の最優先課題は〜。なぜなら〜」と<strong>声に出して</strong>読む。書いた言葉と口にした言葉のズレに本音が出る。
+        </div>
+      </div>
+      <div class="instr-col accent">
+        <div class="num">CHALLENGE — 問い返す</div>
+        <div class="hd">優しさより、鋭さ</div>
+        <div class="bp">
+          「それは症状じゃないか？」「解きやすいのを選んでないか？」「理由が弱くないか？」── 容赦なく問い返す。<strong>それが相手への敬意。</strong>
+        </div>
+      </div>
+    </div>
+    <div class="instr-rule">
+      <span class="lbl">▶ GOAL STATE</span>
+      <span>終了時、全員が『私の最優先課題はこれだ。なぜなら〜だからだ』という1行を、理由とともに握りしめている。</span>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 01</div>
+      <div class="mark">— 18 / 18 —</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="slide-counter" id="counter"></div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const counter = document.getElementById('counter');
+  let current = 0;
+
+  function resize() {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const scale = Math.min(vw / 1920, vh / 1080);
+    slides.forEach(s => {
+      s.style.transform = 'translate(-50%, -50%) scale(' + scale + ')';
+    });
+  }
+
+  function go(n) {
+    if (n < 0 || n >= slides.length) return;
+    slides[current].classList.remove('active');
+    current = n;
+    slides[current].classList.add('active');
+    counter.textContent = (current + 1) + ' / ' + slides.length;
+  }
+
+  window.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); go(current + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); go(current - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End') { e.preventDefault(); go(slides.length - 1); }
+  });
+
+  document.addEventListener('click', function(e) {
+    if (e.clientX > window.innerWidth / 2) go(current + 1);
+    else go(current - 1);
+  });
+
+  window.addEventListener('resize', resize);
+  resize();
+  go(0);
+})();
+</script>
+
+</body>
+</html>

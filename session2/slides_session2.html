@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Session 2 Slides — センターピンを、倒す</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Noto+Serif+JP:wght@700;900&family=Bebas+Neue&family=JetBrains+Mono:wght@400;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0F0F0F;
+    --paper: #FAF8F3;
+    --accent: #D93A26;
+    --accent-deep: #8C1F10;
+    --gold: #B8934A;
+    --mute: #7A7A7A;
+    --soft: #EFEAE0;
+  }
+
+  html, body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: #222;
+    color: var(--ink);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  @page { size: 1920px 1080px; margin: 0; }
+
+  .deck {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+  }
+
+  .slide {
+    width: 1920px;
+    height: 1080px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    overflow: hidden;
+    background: var(--paper);
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transform-origin: center center;
+    transition: opacity 0.4s ease;
+  }
+  .slide.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .slide-counter {
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.15em;
+    color: rgba(255,255,255,0.5);
+    z-index: 9999;
+  }
+
+  /* Common chrome */
+  .chrome-top {
+    position: absolute;
+    top: 48px;
+    left: 64px;
+    right: 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.2em;
+    font-size: 18px;
+    color: var(--ink);
+    z-index: 3;
+  }
+  .chrome-top .brand { display: flex; align-items: center; gap: 14px; }
+  .chrome-top .brand::before {
+    content: ''; width: 18px; height: 18px;
+    background: var(--accent);
+    transform: rotate(45deg);
+  }
+  .chrome-top .page-id {
+    background: var(--ink); color: var(--paper);
+    padding: 4px 14px;
+    font-size: 14px;
+    letter-spacing: 0.25em;
+  }
+
+  .chrome-bottom {
+    position: absolute;
+    bottom: 40px;
+    left: 64px;
+    right: 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.25em;
+    font-size: 14px;
+    color: var(--mute);
+    border-top: 1px solid rgba(0,0,0,0.18);
+    padding-top: 14px;
+    z-index: 3;
+  }
+  .chrome-bottom .mark { color: var(--accent); font-weight: 700; }
+
+  /* ======= COVER ======= */
+  .cover {
+    background:
+      radial-gradient(circle at 85% 15%, rgba(217,58,38,0.12) 0%, transparent 45%),
+      radial-gradient(circle at 12% 90%, rgba(184,147,74,0.14) 0%, transparent 50%),
+      var(--paper);
+    justify-content: center;
+    align-items: center;
+    padding: 0 120px;
+  }
+  .cover-wrap {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+  .cover-kicker {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.4em;
+    font-size: 22px;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .cover-kicker::before {
+    content: ''; width: 80px; height: 2px; background: var(--accent);
+  }
+  .cover-title {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: 160px;
+    line-height: 1.05;
+    color: var(--ink);
+    letter-spacing: 0.01em;
+  }
+  .cover-title .em {
+    display: inline-block;
+    background: linear-gradient(180deg, transparent 60%, rgba(217,58,38,0.3) 60%, rgba(217,58,38,0.3) 88%, transparent 88%);
+    padding: 0 10px;
+  }
+  .cover-sub {
+    font-size: 28px;
+    font-weight: 300;
+    line-height: 1.8;
+    color: #2A2A2A;
+    max-width: 1300px;
+  }
+  .cover-sub strong { color: var(--accent-deep); font-weight: 700; }
+  .cover-quote {
+    border-left: 6px solid var(--accent);
+    padding: 24px 32px;
+    background: rgba(255,255,255,0.6);
+    margin-top: 24px;
+    max-width: 1200px;
+  }
+  .cover-quote .lbl {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.3em;
+    font-size: 16px;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .cover-quote .txt {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 700;
+    font-size: 42px;
+    line-height: 1.5;
+  }
+
+  /* ======= GOAL ======= */
+  .goal {
+    justify-content: center;
+    padding: 0 160px;
+  }
+  .section-kicker {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.4em;
+    font-size: 22px;
+    color: var(--accent);
+    margin-bottom: 40px;
+    display: flex; align-items: center; gap: 20px;
+  }
+  .section-kicker::before {
+    content:''; width:60px; height:2px; background: var(--accent);
+  }
+  .goal h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: 96px;
+    line-height: 1.2;
+    color: var(--ink);
+    margin-bottom: 60px;
+  }
+  .goal h1 .hl {
+    background: linear-gradient(180deg, transparent 62%, rgba(217,58,38,0.28) 62%, rgba(217,58,38,0.28) 88%, transparent 88%);
+    padding: 0 8px;
+  }
+  .goal-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 36px;
+    max-width: 1500px;
+  }
+  .goal-card {
+    background: #FFF;
+    padding: 36px 40px;
+    border-top: 4px solid var(--accent);
+  }
+  .goal-card .num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    margin-bottom: 12px;
+  }
+  .goal-card .t {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: 36px;
+    color: var(--ink);
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+  .goal-card .d {
+    font-size: 20px;
+    line-height: 1.7;
+    color: #333;
+  }
+
+  /* ======= ZEN ======= */
+  .zen {
+    background: var(--ink);
+    color: var(--paper);
+    justify-content: center;
+    align-items: center;
+    padding: 0 120px;
+  }
+  .zen .section-kicker { color: var(--accent); }
+  .zen-hook {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 700;
+    font-size: 52px;
+    line-height: 1.6;
+    color: #BBB;
+    margin-bottom: 60px;
+    max-width: 1400px;
+  }
+  .zen-punch {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: 148px;
+    line-height: 1.1;
+    color: var(--paper);
+    letter-spacing: 0.02em;
+  }
+  .zen-punch .accent { color: var(--accent); }
+  .zen-punch .hl {
+    display: inline-block;
+    background: linear-gradient(180deg, transparent 60%, rgba(217,58,38,0.45) 60%, rgba(217,58,38,0.45) 92%, transparent 92%);
+    padding: 0 12px;
+    color: var(--paper);
+  }
+  .zen-tag {
+    display: inline-block;
+    margin-top: 50px;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.3em;
+    font-size: 22px;
+    color: var(--accent);
+    border-top: 2px solid var(--accent);
+    padding-top: 14px;
+  }
+  .zen .chrome-top { color: #888; }
+  .zen .chrome-top .brand::before { background: var(--accent); }
+  .zen .chrome-top .page-id { background: var(--accent); color: #FFF; }
+  .zen .chrome-bottom { color: #555; border-top-color: #333; }
+
+  /* ======= PRINCIPLES ======= */
+  .principles {
+    padding: 140px 120px 100px;
+  }
+  .principles .badge {
+    display: inline-block;
+    background: var(--accent);
+    color: #FFF;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 0.25em;
+    padding: 8px 22px;
+    margin-bottom: 30px;
+  }
+  .principles h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: 108px;
+    line-height: 1.15;
+    color: var(--ink);
+    margin-bottom: 30px;
+  }
+  .principles h1 .emph { color: var(--accent); }
+  .principles .lead {
+    font-size: 30px;
+    line-height: 1.8;
+    color: #2A2A2A;
+    max-width: 1400px;
+    margin-bottom: 50px;
+  }
+  .principles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    max-width: 1600px;
+  }
+  .principle-card {
+    background: #FFF;
+    border-top: 4px solid var(--accent);
+    padding: 32px 28px;
+    display: flex;
+    flex-direction: column;
+  }
+  .principle-card .p-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 72px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .principle-card .p-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 0.3em;
+    color: var(--mute);
+    margin-bottom: 16px;
+  }
+  .principle-card .p-head {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: 38px;
+    color: var(--ink);
+    line-height: 1.3;
+    margin-bottom: 14px;
+  }
+  .principle-card .p-head .emph { color: var(--accent); }
+  .principle-card .p-body {
+    font-size: 22px;
+    line-height: 1.7;
+    color: #2A2A2A;
+    margin-top: auto;
+  }
+  .principles .source-note {
+    margin-top: 28px;
+    font-size: 16px;
+    color: var(--mute);
+    font-weight: 500;
+  }
+
+  /* ======= BRIDGE ======= */
+  .bridge {
+    background: var(--ink);
+    color: var(--paper);
+    justify-content: center;
+    padding: 0 120px;
+  }
+  .bridge .section-kicker { color: var(--accent); margin-bottom: 24px; }
+  .bridge-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 360px;
+    line-height: 0.85;
+    color: var(--paper);
+    margin-bottom: 10px;
+    position: relative;
+    display: inline-block;
+  }
+  .bridge-num::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: 20px;
+    width: 100%; height: 16px;
+    background: var(--accent);
+  }
+  .bridge h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: 110px;
+    line-height: 1.15;
+    color: var(--paper);
+    margin-top: 30px;
+    margin-bottom: 50px;
+  }
+  .bridge h1 .emph { color: var(--accent); }
+  .bridge .sub {
+    font-size: 30px;
+    line-height: 1.8;
+    color: #BBB;
+    max-width: 1500px;
+  }
+  .bridge .meta {
+    display: flex;
+    gap: 30px;
+    margin-top: 60px;
+    flex-wrap: wrap;
+  }
+  .bridge .meta .chip {
+    border: 2px solid var(--accent);
+    color: var(--accent);
+    padding: 10px 24px;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.25em;
+    font-size: 22px;
+  }
+  .bridge .chrome-top { color: #888; }
+  .bridge .chrome-top .page-id { background: var(--accent); color:#FFF; }
+  .bridge .chrome-bottom { color:#555; border-top-color:#333; }
+
+  /* ======= INSTRUCTION ======= */
+  .instr {
+    padding: 140px 120px 100px;
+  }
+  .instr-head {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    margin-bottom: 40px;
+  }
+  .instr-head .step-tag {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.3em;
+    padding: 8px 18px;
+  }
+  .instr-head .part-tag {
+    background: var(--accent);
+    color: #FFF;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.3em;
+    padding: 8px 18px;
+  }
+  .instr-head .timer-tag {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 44px;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+  }
+  .instr h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: 84px;
+    line-height: 1.2;
+    color: var(--ink);
+    margin-bottom: 50px;
+  }
+  .instr h1 .emph { color: var(--accent); }
+  .instr h1 .strike {
+    color: #888;
+    text-decoration: line-through;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 5px;
+  }
+
+  .instr-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 50px;
+  }
+  .instr-col {
+    background: #FFF;
+    padding: 32px 36px;
+    border-top: 4px solid var(--ink);
+  }
+  .instr-col.accent { border-top-color: var(--accent); }
+  .instr-col .num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.25em;
+    color: var(--mute);
+    margin-bottom: 12px;
+  }
+  .instr-col.accent .num { color: var(--accent); }
+  .instr-col .hd {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: 36px;
+    color: var(--ink);
+    margin-bottom: 18px;
+  }
+  .instr-col .hd .emph { color: var(--accent); }
+  .instr-col .bp {
+    font-size: 22px;
+    line-height: 1.85;
+    color: #2A2A2A;
+  }
+  .instr-col .bp strong { color: var(--accent-deep); }
+  .instr-rule {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 24px 32px;
+    font-size: 26px;
+    line-height: 1.6;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .instr-rule .lbl {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--accent);
+    letter-spacing: 0.25em;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="deck">
+
+  <!-- ============== SLIDE 01: COVER ============== -->
+  <section class="slide cover">
+    <div class="chrome-top">
+      <div class="brand">KYOTO WORKATION 2026 — KOIKE SESSION</div>
+      <div class="page-id">SESSION 02</div>
+    </div>
+    <div class="cover-wrap">
+      <div class="cover-kicker">WORKSHEET SESSION — 16:00 – 17:00</div>
+      <h1 class="cover-title">センターピンを、<br><span class="em">倒す</span>。</h1>
+      <p class="cover-sub">
+        真の課題がわかった。次は、<strong>精度の高いアクション</strong>と<br>
+        <strong>逃げ道のない作戦</strong>で打ち砕く60分。
+      </p>
+      <div class="cover-quote">
+        <div class="lbl">KILLER PHRASE</div>
+        <div class="txt">逃げ道のない作戦だけが、<br>現実を変える。</div>
+      </div>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 02</div>
+      <div class="mark">— 01 / 16 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 02: TODAY'S GOAL ============== -->
+  <section class="slide goal">
+    <div class="chrome-top">
+      <div class="brand">KYOTO WORKATION 2026 — KOIKE SESSION</div>
+      <div class="page-id">SESSION 02 / GOAL</div>
+    </div>
+    <div class="section-kicker">TODAY'S GOAL ／ 今日のゴール</div>
+    <h1>
+      精度の高いアクションと、<br>
+      逃げ道のない<span class="hl">作戦</span>。
+    </h1>
+    <div class="goal-cards">
+      <div class="goal-card">
+        <div class="num">01 — ATTACK</div>
+        <div class="t">精度の高いアクションを<br>設計する</div>
+        <div class="d">課題は1つに絞った。だからこそ多角的に攻める。<strong>アクション・断つもの・追う数字</strong>を全て確定させる。</div>
+      </div>
+      <div class="goal-card">
+        <div class="num">02 — NO ESCAPE</div>
+        <div class="t">逃げ道を全部潰し、<br>退路を断つ</div>
+        <div class="d">言い訳を先に封じ、仲間と<strong>公開契約</strong>を結び、<strong>3ヶ月後の自分への手紙</strong>を預ける。3重のロック。</div>
+      </div>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 02</div>
+      <div class="mark">— 02 / 16 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 03: ZEN — 診断→処方 ============== -->
+  <section class="slide zen">
+    <div class="chrome-top">
+      <div class="brand">LECTURE — FROM DIAGNOSIS</div>
+      <div class="page-id">CONCEPT · 01</div>
+    </div>
+    <div>
+      <div class="section-kicker">FROM DIAGNOSIS TO PRESCRIPTION</div>
+      <p class="zen-hook">
+        セッション1で、あなたは「本当の問題」を掘り当てた。<br>
+        しかし、問題がわかっただけでは何も変わらない。
+      </p>
+      <div class="zen-punch">
+        診断はついた。<br>
+        次は<span class="hl">処方</span>だ。
+      </div>
+      <div class="zen-tag">KNOWING ≠ DOING</div>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 02</div>
+      <div class="mark">— 03 / 16 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 04: やりまくれば必ず近づく行動を決める ============== -->
+  <section class="slide" style="padding: 130px 120px 100px; background: var(--paper);">
+    <div class="chrome-top">
+      <div class="brand">LECTURE — THE KEY ACTION</div>
+      <div class="page-id">CONCEPT · 02</div>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+      <span style="background: var(--accent); color: #FFF; font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 0.25em; padding: 6px 18px;">PRESCRIPTION 01</span>
+    </div>
+
+    <h1 style="font-family: 'Noto Serif JP', serif; font-weight: 900; font-size: 80px; line-height: 1.2; color: var(--ink); margin-bottom: 40px;">
+      <span style="color: var(--accent);">やりまくれば</span>必ず近づく<br>行動を決める。
+    </h1>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px;">
+      <div style="background: #FFF; border-top: 4px solid var(--accent); padding: 32px 36px;">
+        <div style="font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.3em; color: var(--accent); margin-bottom: 14px;">WHY — なぜ行動を「決める」のか</div>
+        <div style="font-family: 'Noto Serif JP', serif; font-weight: 900; font-size: 34px; color: var(--ink); margin-bottom: 16px;">量 × 頻度 × <span style="color: var(--accent);">精度</span></div>
+        <div style="font-size: 22px; line-height: 1.8; color: #2A2A2A;">
+          どんな行動でもいいわけではない。<br>
+          「<strong>これさえやり続ければセンターピンが倒れる</strong>」<br>
+          という行動を見極めることが全て。
+        </div>
+      </div>
+      <div style="background: #FFF; border-top: 4px solid var(--ink); padding: 32px 36px;">
+        <div style="font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.3em; color: var(--mute); margin-bottom: 14px;">HOW — どう決めるか</div>
+        <div style="font-family: 'Noto Serif JP', serif; font-weight: 900; font-size: 34px; color: var(--ink); margin-bottom: 16px;">問い続ける</div>
+        <div style="font-size: 22px; line-height: 1.8; color: #2A2A2A;">
+          「本当に<strong>これで</strong>センターピンが倒れるか？」<br>
+          「もっと根本に効くアクションはないか？」<br>
+          何度も問い直す。それが精度。
+        </div>
+      </div>
+    </div>
+
+    <div style="background: var(--ink); color: var(--paper); padding: 24px 32px; font-size: 26px; line-height: 1.6; display: flex; align-items: center; gap: 24px;">
+      <span style="font-family: 'Bebas Neue', sans-serif; color: var(--accent); letter-spacing: 0.25em; font-size: 22px; flex-shrink: 0;">▶ KEY</span>
+      <span>「頑張る」「意識する」は行動ではない。<strong style="color: #FFE4DF;">動詞は具体的な行動だけ。</strong>それをやりまくる覚悟があるか？</span>
+    </div>
+
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 02</div>
+      <div class="mark">— 04 / 16 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 05: ZEN — 決断＝断つことを決める ============== -->
+  <section class="slide zen">
+    <div class="chrome-top">
+      <div class="brand">LECTURE — DECISION</div>
+      <div class="page-id">CONCEPT · 03</div>
+    </div>
+    <div>
+      <div class="section-kicker">PRESCRIPTION 02 — DECISION</div>
+      <p class="zen-hook">
+        行動を増やすだけでは足りない。<br>
+        新しい行動を入れるには、<span style="color:var(--accent);">スペース</span>が要る。
+      </p>
+      <div class="zen-punch" style="font-size: 110px;">
+        決断とは、<br>
+        <span class="hl">断つ</span>ことを決めること。
+      </div>
+      <div class="zen-tag">DECISION = DECIDE WHAT TO CUT</div>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 02</div>
+      <div class="mark">— 05 / 16 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 06: ストッパーと変われないループ ============== -->
+  <section class="slide" style="padding: 120px 100px 80px; background: var(--paper);">
+    <div class="chrome-top">
+      <div class="brand">LECTURE — THE ENEMY</div>
+      <div class="page-id">CONCEPT · 04</div>
+    </div>
+
+    <!-- Title -->
+    <div style="margin-bottom: 36px;">
+      <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+        <span style="background: var(--accent); color: #FFF; font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 0.25em; padding: 6px 18px;">WARNING</span>
+        <span style="background: var(--ink); color: var(--paper); font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 0.25em; padding: 6px 18px;">STOPPER</span>
+      </div>
+      <h1 style="font-family: 'Noto Serif JP', serif; font-weight: 900; font-size: 72px; line-height: 1.2; color: var(--ink);">
+        行動を妨げる敵＝<span style="color: var(--accent);">ストッパー</span>。
+      </h1>
+    </div>
+
+    <!-- Two columns: Stopper types + Loop diagram -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; flex: 1; align-items: start;">
+
+      <!-- Left: Stopper types -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        <div style="background: #FFF; border-top: 4px solid var(--ink); padding: 28px 32px;">
+          <div style="font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 0.3em; color: var(--mute); margin-bottom: 12px;">INTERNAL — 内的ストッパー</div>
+          <div style="font-family: 'Noto Serif JP', serif; font-weight: 900; font-size: 32px; color: var(--ink); margin-bottom: 14px;">思い込み・<span style="color: var(--accent);">信念</span></div>
+          <div style="font-size: 20px; line-height: 1.7; color: #2A2A2A;">「自分にはまだ早い」「資格がないと…」<br>「前もダメだったから」</div>
+        </div>
+        <div style="background: #FFF; border-top: 4px solid var(--accent); padding: 28px 32px;">
+          <div style="font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 0.3em; color: var(--accent); margin-bottom: 12px;">EXTERNAL — 外的ストッパー</div>
+          <div style="font-family: 'Noto Serif JP', serif; font-weight: 900; font-size: 32px; color: var(--ink); margin-bottom: 14px;"><span style="color: var(--accent);">環境</span>の障害</div>
+          <div style="font-size: 20px; line-height: 1.7; color: #2A2A2A;">「時間がない」「周囲の反対」<br>「日常の雑務に追われる」</div>
+        </div>
+        <div style="background: var(--ink); color: var(--paper); padding: 18px 24px; font-size: 22px; line-height: 1.6; display: flex; align-items: center; gap: 16px;">
+          <span style="font-family: 'Bebas Neue', sans-serif; color: var(--accent); letter-spacing: 0.2em; font-size: 18px; flex-shrink: 0;">▶ KEY</span>
+          <span><strong style="color: #FFE4DF;">意識するだけでは除去できない。</strong><br>断つ or 書き換えるアクションが必要。</span>
+        </div>
+      </div>
+
+      <!-- Right: 変われないループ diagram -->
+      <div style="position: relative; width: 100%; height: 620px;">
+        <!-- Loop title -->
+        <div style="text-align: center; margin-bottom: 20px;">
+          <span style="font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.3em; font-size: 20px; color: var(--accent);">THE LOOP YOU CAN'T ESCAPE</span>
+          <div style="font-family: 'Noto Serif JP', serif; font-weight: 900; font-size: 36px; color: var(--ink); margin-top: 6px;">変われないループ</div>
+        </div>
+
+        <!-- SVG Loop -->
+        <svg viewBox="0 0 700 500" style="width: 100%; height: 480px;" xmlns="http://www.w3.org/2000/svg">
+          <!-- Circular arrows -->
+          <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#D93A26" />
+            </marker>
+          </defs>
+
+          <!-- Arrow paths (clockwise) -->
+          <!-- Top → Right -->
+          <path d="M 470,100 Q 580,100 600,200" fill="none" stroke="#D93A26" stroke-width="3" marker-end="url(#arrowhead)" />
+          <!-- Right → Bottom -->
+          <path d="M 600,310 Q 580,400 470,430" fill="none" stroke="#D93A26" stroke-width="3" marker-end="url(#arrowhead)" />
+          <!-- Bottom → Left -->
+          <path d="M 230,430 Q 120,400 100,310" fill="none" stroke="#D93A26" stroke-width="3" marker-end="url(#arrowhead)" />
+          <!-- Left → Top -->
+          <path d="M 100,200 Q 120,100 230,100" fill="none" stroke="#D93A26" stroke-width="3" marker-end="url(#arrowhead)" />
+
+          <!-- Node 1: Top - 方向がわからない -->
+          <rect x="230" y="50" width="240" height="100" rx="8" fill="#0F0F0F" />
+          <text x="350" y="88" text-anchor="middle" fill="#FAF8F3" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="500">自分は何がしたいんだろう…</text>
+          <text x="350" y="118" text-anchor="middle" fill="#D93A26" font-family="'Noto Serif JP', serif" font-size="20" font-weight="900">方向がわからない</text>
+
+          <!-- Node 2: Right - 自信が持てない -->
+          <rect x="500" y="200" width="200" height="110" rx="8" fill="#0F0F0F" />
+          <text x="600" y="238" text-anchor="middle" fill="#FAF8F3" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="500">自分なんて…</text>
+          <text x="600" y="268" text-anchor="middle" fill="#D93A26" font-family="'Noto Serif JP', serif" font-size="20" font-weight="900">自信が</text>
+          <text x="600" y="296" text-anchor="middle" fill="#D93A26" font-family="'Noto Serif JP', serif" font-size="20" font-weight="900">持てない</text>
+
+          <!-- Node 3: Bottom - 行動できない -->
+          <rect x="230" y="380" width="240" height="100" rx="8" fill="#0F0F0F" />
+          <text x="350" y="418" text-anchor="middle" fill="#FAF8F3" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="500">結局、動けてない…</text>
+          <text x="350" y="450" text-anchor="middle" fill="#D93A26" font-family="'Noto Serif JP', serif" font-size="20" font-weight="900">行動できない</text>
+
+          <!-- Node 4: Left - 結果が出ない -->
+          <rect x="0" y="200" width="200" height="110" rx="8" fill="#0F0F0F" />
+          <text x="100" y="238" text-anchor="middle" fill="#FAF8F3" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="500">1年前と何も</text>
+          <text x="100" y="261" text-anchor="middle" fill="#FAF8F3" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="500">変わっていない…</text>
+          <text x="100" y="296" text-anchor="middle" fill="#D93A26" font-family="'Noto Serif JP', serif" font-size="20" font-weight="900">結果が出ない</text>
+
+          <!-- Center label -->
+          <text x="350" y="250" text-anchor="middle" fill="#D93A26" font-family="'Bebas Neue', sans-serif" font-size="28" letter-spacing="0.15em" opacity="0.35">LOOP</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 02</div>
+      <div class="mark">— 06 / 16 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 07: 3 PRINCIPLES ============== -->
+  <section class="slide principles">
+    <div class="chrome-top">
+      <div class="brand">LECTURE — CORE PRINCIPLES</div>
+      <div class="page-id">CONCEPT · 05</div>
+    </div>
+    <div class="badge">CONCEPT — 3 PRINCIPLES</div>
+    <h1><span class="emph">3つの原則</span>。</h1>
+    <p class="lead">
+      この3つを守れば、あなたの作戦は<br>
+      「気合の計画」から「ストッパーを潰す仕組み」に変わる。
+    </p>
+    <div class="principles-grid">
+      <div class="principle-card">
+        <div class="p-num">01</div>
+        <div class="p-label">PRECISION OVER QUANTITY</div>
+        <div class="p-head"><span class="emph">精度</span>を上げる</div>
+        <div class="p-body">数じゃない。「これで本当にセンターピンが倒れるか？」を何度も問い直す。</div>
+      </div>
+      <div class="principle-card">
+        <div class="p-num">02</div>
+        <div class="p-label">TRACK THE NUMBER</div>
+        <div class="p-head"><span class="emph">数字</span>で追う</div>
+        <div class="p-body">感覚で「なんとなく頑張っている」は危険。毎月1つの数字だけ確認する。</div>
+      </div>
+      <div class="principle-card">
+        <div class="p-num">03</div>
+        <div class="p-label">KILL THE STOPPER</div>
+        <div class="p-head"><span class="emph">ストッパー</span>を潰す</div>
+        <div class="p-body">言い訳の正体はストッパー。書き出して封じ、契約で縛り、手紙で監視。3重のロック。</div>
+      </div>
+    </div>
+    <div class="source-note">TOC ／ OKR ／ ユメキャリ自己変革プログラム ／ Commitment Theory</div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 02</div>
+      <div class="mark">— 07 / 16 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 08: ZEN — キラーフレーズ ============== -->
+  <section class="slide zen">
+    <div class="chrome-top">
+      <div class="brand">LECTURE — THE ONLY RULE</div>
+      <div class="page-id">CONCEPT · 06</div>
+    </div>
+    <div>
+      <div class="section-kicker">THE ONLY RULE</div>
+      <p class="zen-hook">
+        アクションは決めた。やる気もある。<br>
+        でも人間は、必ず逃げる。ストッパーが必ず邪魔をする。
+      </p>
+      <div class="zen-punch" style="font-size: 100px;">
+        逃げ道のない作戦だけが、<br>
+        <span class="hl">現実</span>を変える。
+      </div>
+      <div class="zen-tag">NO ESCAPE, NO EXCUSE</div>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 02</div>
+      <div class="mark">— 08 / 16 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 09: WORK BRIDGE ============== -->
+  <section class="slide bridge">
+    <div class="chrome-top">
+      <div class="brand">WORKSHOP — MISSION ORDER</div>
+      <div class="page-id">WORK / 07</div>
+    </div>
+    <div>
+      <div class="section-kicker">MISSION ORDER ／ 作戦指令書</div>
+      <div class="bridge-num">W</div>
+      <h1>
+        <span class="emph">作戦指令書</span>を、書く。
+      </h1>
+      <p class="sub">
+        セッション1の1行を、<strong style="color:var(--accent);">倒すための武器</strong>に変換する。<br>
+        5つの問い＋3つの儀式で、逃げ道のない作戦を完成させる。
+      </p>
+      <div class="meta">
+        <div class="chip">TOTAL 35 MIN</div>
+        <div class="chip">PHASE 1 — 13 MIN</div>
+        <div class="chip">PHASE 2 — 10 MIN</div>
+        <div class="chip">PHASE 3 — 12 MIN</div>
+      </div>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 02</div>
+      <div class="mark">— 09 / 16 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 10: TRANSFER ============== -->
+  <section class="slide instr">
+    <div class="chrome-top">
+      <div class="brand">WORKSHOP — INSTRUCTION</div>
+      <div class="page-id">WORK · TRANSFER</div>
+    </div>
+    <div class="instr-head">
+      <span class="step-tag">SESSION 02</span>
+      <span class="part-tag">TRANSFER ／ 転記</span>
+      <span class="timer-tag">02:00</span>
+    </div>
+    <h1>
+      セッション1の<span class="emph">1行</span>を、<br>
+      ここに持ち込む。
+    </h1>
+    <div class="instr-body">
+      <div class="instr-col">
+        <div class="num">WRITE IT DOWN — 一字一句写す</div>
+        <div class="hd">「私の真の課題は、〜ではなく、〜である」</div>
+        <div class="bp">
+          Session 1 で書き切った<strong>あの1行</strong>を、ワークシート冒頭に書き写す。これが今日の<strong>攻撃対象</strong>。
+        </div>
+      </div>
+      <div class="instr-col accent">
+        <div class="num">NAME IT — 作戦名をつける</div>
+        <div class="hd">ワクワクする<span class="emph">作戦名</span></div>
+        <div class="bp">
+          ただのタスクにしない。「◯◯作戦」「△△計画」── <strong>自分が燃える名前</strong>をつけろ。名前がなければ忘れる。
+        </div>
+      </div>
+    </div>
+    <div class="instr-rule">
+      <span class="lbl">▶ THE SHIFT</span>
+      <span>書き写せないなら、Session 1 に戻る。攻撃対象が曖昧なまま武器は選べない。</span>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 02</div>
+      <div class="mark">— 10 / 16 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 11: PHASE 1 ============== -->
+  <section class="slide instr">
+    <div class="chrome-top">
+      <div class="brand">WORKSHOP — INSTRUCTION</div>
+      <div class="page-id">WORK · PHASE 1</div>
+    </div>
+    <div class="instr-head">
+      <span class="step-tag">PHASE 1</span>
+      <span class="part-tag">ATTACK ／ 攻めの設計</span>
+      <span class="timer-tag">13:00</span>
+    </div>
+    <h1>
+      <span class="emph">攻め</span>の設計。
+    </h1>
+    <div class="instr-body">
+      <div class="instr-col">
+        <div class="num">Q1 — ACTIONS + Q2 — 決断</div>
+        <div class="hd">アクション一覧 × <span class="emph">決断</span></div>
+        <div class="bp">
+          課題を倒すアクションを<strong>精度重視</strong>で書き出す。それぞれに頻度を設定。さらに<strong>決断＝断つことを決める</strong>。現状の先の未来を断つ覚悟を1つ宣言。
+        </div>
+      </div>
+      <div class="instr-col accent">
+        <div class="num">Q3 — THE ONE NUMBER</div>
+        <div class="hd">毎月追う<span class="emph">たった1つの数字</span></div>
+        <div class="bp">
+          感覚ではなく数字で追う。現在値と1ヶ月後の目標値を書く。<strong>数字がなければ目隠しでダーツ。</strong>
+        </div>
+      </div>
+    </div>
+    <div class="instr-rule">
+      <span class="lbl">▶ 精度チェック</span>
+      <span>「頑張る」「意識する」は全てNG。<strong style="color:#FFE4DF;">動詞は具体的な行動だけ</strong>。「これで本当にセンターピンが倒れるか？」を何度も問い直せ。</span>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 02</div>
+      <div class="mark">— 11 / 16 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 12: PHASE 2 ============== -->
+  <section class="slide instr">
+    <div class="chrome-top">
+      <div class="brand">WORKSHOP — INSTRUCTION</div>
+      <div class="page-id">WORK · PHASE 2</div>
+    </div>
+    <div class="instr-head">
+      <span class="step-tag">PHASE 2</span>
+      <span class="part-tag">STOPPER ／ ストッパーを潰す</span>
+      <span class="timer-tag">10:00</span>
+    </div>
+    <h1>
+      <span class="emph">ストッパー</span>を、全部潰す。
+    </h1>
+    <div class="instr-body">
+      <div class="instr-col">
+        <div class="num">Q4 — STOPPER MAP</div>
+        <div class="hd">ストッパー<span class="emph">TOP3</span>を特定する</div>
+        <div class="bp">
+          内的（思い込み）も外的（環境）も、行動を妨げるストッパーを<strong>正直に3つ</strong>書き出す。それぞれの<strong>対処アクション</strong>を決める。書いた瞬間、ストッパーは正体を失う。
+        </div>
+      </div>
+      <div class="instr-col accent">
+        <div class="num">Q5 — REPORT LINE</div>
+        <div class="hd"><span class="emph">報告先</span>を確定する</div>
+        <div class="bp">
+          誰に・いつ・どう報告するか。<strong>人の名前</strong>まで確定させる。「誰かに…」は報告先ではない。サボっても誰も気づかない状態を潰す。
+        </div>
+      </div>
+    </div>
+    <div class="instr-rule">
+      <span class="lbl">▶ 変われないループ</span>
+      <span>ストッパーを放置すれば、1年後も同じ場所にいる。<strong style="color:#FFE4DF;">意識するだけでは除去できない。</strong>具体的なアクションで潰せ。</span>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 02</div>
+      <div class="mark">— 12 / 16 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 13: PHASE 3 ============== -->
+  <section class="slide instr">
+    <div class="chrome-top">
+      <div class="brand">WORKSHOP — INSTRUCTION</div>
+      <div class="page-id">WORK · PHASE 3</div>
+    </div>
+    <div class="instr-head">
+      <span class="step-tag">PHASE 3</span>
+      <span class="part-tag">RITUAL ／ 退路を断つ儀式</span>
+      <span class="timer-tag">12:00</span>
+    </div>
+    <h1>
+      退路を断つ<span class="emph">儀式</span>。
+    </h1>
+    <div class="instr-body">
+      <div class="instr-col">
+        <div class="num">① 作戦指令書 → ② 公開契約書</div>
+        <div class="hd">完成させて、<span class="emph">サイン</span>する</div>
+        <div class="bp">
+          作戦指令書を1枚に統合。隣の人とペアを組み、お互いの指令書を読み合い<strong>サイン</strong>する。月1で確認し合う<strong>契約</strong>を結ぶ。
+        </div>
+      </div>
+      <div class="instr-col accent">
+        <div class="num">③ 3ヶ月後の手紙</div>
+        <div class="hd"><span class="emph">未来の自分</span>に手紙を書く</div>
+        <div class="bp">
+          今の決意・恐れ・覚悟を正直に書く。書いたら<strong>隣の人に預ける</strong>。3ヶ月後に届いた時、「あの日の自分」に見られている。
+        </div>
+      </div>
+    </div>
+    <div class="instr-rule">
+      <span class="lbl">▶ 3重のロック</span>
+      <span>ストッパーを<strong style="color:#FFE4DF;">特定して潰し</strong>、契約で<strong style="color:#FFE4DF;">仲間に縛られ</strong>、手紙で<strong style="color:#FFE4DF;">未来の自分に見られる</strong>。もう逃げられない。</span>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 02</div>
+      <div class="mark">— 13 / 16 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 14: DECLARE BRIDGE ============== -->
+  <section class="slide bridge">
+    <div class="chrome-top">
+      <div class="brand">WORKSHOP — DECLARE</div>
+      <div class="page-id">DECLARE / 04</div>
+    </div>
+    <div>
+      <div class="section-kicker">DECLARE ／ 公開コミットメント</div>
+      <div class="bridge-num">D</div>
+      <h1>
+        作戦指令書を、<br>
+        <span class="emph">声に出す</span>。
+      </h1>
+      <p class="sub">
+        書いただけでは、まだ「予定」。<br>
+        声に出した瞬間、これは<strong style="color:var(--accent);">退路のない約束</strong>になる。
+      </p>
+      <div class="meta">
+        <div class="chip">TOTAL 15 MIN</div>
+        <div class="chip">1 PERSON — 2 MIN</div>
+      </div>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 02</div>
+      <div class="mark">— 14 / 16 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 15: DECLARE SHARE ============== -->
+  <section class="slide instr">
+    <div class="chrome-top">
+      <div class="brand">WORKSHOP — SHARE &amp; DECLARE</div>
+      <div class="page-id">DECLARE · SHARE</div>
+    </div>
+    <div class="instr-head">
+      <span class="step-tag">DECLARE</span>
+      <span class="part-tag">SHARE ／ 宣言</span>
+      <span class="timer-tag">15:00</span>
+    </div>
+    <h1>
+      「<span class="strike">頑張ります</span>」禁止。
+    </h1>
+    <div class="instr-body">
+      <div class="instr-col">
+        <div class="num">DECLARE — 宣言テンプレ</div>
+        <div class="hd">作戦指令書を読み上げる</div>
+        <div class="bp">
+          「私の課題は◯◯。アクションは◯◯。◯◯はやめる。毎月◯◯を追う。逃げ道は全部潰した。<strong>◯◯さんと契約した</strong>」── そのまま読む。
+        </div>
+      </div>
+      <div class="instr-col accent">
+        <div class="num">WITNESS — 聞く側の役割</div>
+        <div class="hd"><span class="emph">甘さ</span>を問い返す</div>
+        <div class="bp">
+          「そのアクション、精度は十分か？」「逃げ道、まだ抜け穴ないか？」「断つべきこと、甘くないか？」── 愛のある詰めで精度を上げる。
+        </div>
+      </div>
+    </div>
+    <div class="instr-rule">
+      <span class="lbl">▶ GOAL STATE</span>
+      <span>全員が<strong style="color:#FFE4DF;">作戦指令書＋契約書＋預けた手紙</strong>の3点セットで京都を出る。</span>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 02</div>
+      <div class="mark">— 15 / 16 —</div>
+    </div>
+  </section>
+
+  <!-- ============== SLIDE 16: CLOSING ZEN ============== -->
+  <section class="slide zen">
+    <div class="chrome-top">
+      <div class="brand">CLOSING</div>
+      <div class="page-id">CLOSING</div>
+    </div>
+    <div>
+      <div class="section-kicker">GO BREAK IT</div>
+      <p class="zen-hook">
+        逃げ道は潰した。契約は結んだ。手紙は預けた。
+      </p>
+      <div class="zen-punch" style="font-size: 148px;">
+        あとは、<span class="hl">やるだけ</span>だ。
+      </div>
+      <div class="zen-tag">NO ESCAPE. NO EXCUSE. JUST DO IT.</div>
+    </div>
+    <div class="chrome-bottom">
+      <div>KOIKE / SESSION 02</div>
+      <div class="mark">— 16 / 16 —</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="slide-counter" id="counter"></div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const counter = document.getElementById('counter');
+  let current = 0;
+
+  function resize() {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const scale = Math.min(vw / 1920, vh / 1080);
+    slides.forEach(s => {
+      s.style.transform = 'translate(-50%, -50%) scale(' + scale + ')';
+    });
+  }
+
+  function go(n) {
+    if (n < 0 || n >= slides.length) return;
+    slides[current].classList.remove('active');
+    current = n;
+    slides[current].classList.add('active');
+    counter.textContent = (current + 1) + ' / ' + slides.length;
+  }
+
+  window.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); go(current + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); go(current - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End') { e.preventDefault(); go(slides.length - 1); }
+  });
+
+  document.addEventListener('click', function(e) {
+    if (e.clientX > window.innerWidth / 2) go(current + 1);
+    else go(current - 1);
+  });
+
+  window.addEventListener('resize', resize);
+  resize();
+  go(0);
+})();
+</script>
+
+</body>
+</html>
